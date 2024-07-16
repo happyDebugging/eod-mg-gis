@@ -49,6 +49,10 @@ export class GisMapComponent implements OnInit {
         .bindPopup(marker.Address);
     }
 
+    const userLocation = map.locate({setView: true, maxZoom: 16});
+    //L.marker([39.340313, 22.937627]).addTo(map);
+    
+
   }
 
 
