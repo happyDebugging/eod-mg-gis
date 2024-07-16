@@ -9,51 +9,33 @@ import * as L from 'leaflet';
 export class GisMapComponent implements OnInit {
 
   poiMarkers = [
-  { Lat: 39.303044, Long: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Λειτουργεί' }, 
-  { Lat: 39.301463, Long: 22.940258, Address: 'Αλόης, Σωρός', State: 'Λειτουργεί' },
-  { Lat: 39.302951, Long: 22.938931, Address: 'Αμαρυλίδος, Σωρός', State: 'Λειτουργεί' },
-  { Lat: 39.304238, Long: 22.940437, Address: 'Σωρός', State: 'Λειτουργεί' },
-  { Lat: 39.298565, Long: 22.940683, Address: 'Σωρός', State: 'Λειτουργεί' },
-  { Lat: 39.30932, Long: 22.934969, Address: 'Σωρός', State: 'Λειτουργεί' },
-  { Lat: 39.340313, Long: 22.937627, Address: 'Ασκαλάμου, Νέες Παγασές', State: 'Λειτουργεί' },
-  { Lat: 39.368091, Long: 22.937751, Address: '2ας Νοεμβρίου 67, Βόλος', State: 'Δεν ελέγθηκε' },
-  { Lat: 39.363834, Long: 22.940542, Address: 'Πλ. Ρήγα Φεραίου (Δημητριάδος), Βόλος', State: 'Δεν ελέγθηκε' },
-  { Lat: 39.359487, Long: 22.95042, Address: 'Ογλ-Ερμού, Βόλος', State: 'Δεν ελέγθηκε' },
-  { Lat: 39.361184, Long: 22.947422, Address: 'Κ. Καρτάλη 64, Βόλος', State: 'Δεν ελέγθηκε' },
-  { Lat: 39.36164, Long: 22.946275, Address: 'Ελ. Βενιζέλου 20, Βόλος', State: 'Δεν ελέγθηκε' },
-  { Lat: 39.368900, Long: 22.945117, Address: 'Βασσάνη 109, Βόλος', State: 'Δεν ελέγθηκε' },
-  { Lat: 39.370517, Long: 22.946622, Address: 'Βασσάνη 141-127, Βόλος', State: 'Δεν ελέγθηκε' },
-  { Lat: 39.370525, Long: 22.94827, Address: 'Στρ. Μακρυγιάννη 71, Βόλος', State: 'Δεν ελέγθηκε' },
-  { Lat: 39.364914, Long: 22.953848, Address: 'Γκλαβάνη 149, Βόλος', State: 'Δεν ελέγθηκε' },
-  { Lat: 39.369205, Long: 22.950564, Address: 'Στρ. Μακρυγιάννη 103, Βόλος', State: 'Δεν ελέγθηκε' }
+    { Lat: 39.303044, Long: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Λειτουργεί' },
+    { Lat: 39.301463, Long: 22.940258, Address: 'Αλόης, Σωρός', State: 'Λειτουργεί' },
+    { Lat: 39.302951, Long: 22.938931, Address: 'Αμαρυλίδος, Σωρός', State: 'Λειτουργεί' },
+    { Lat: 39.304238, Long: 22.940437, Address: 'Σωρός', State: 'Λειτουργεί' },
+    { Lat: 39.298565, Long: 22.940683, Address: 'Σωρός', State: 'Λειτουργεί' },
+    { Lat: 39.30932, Long: 22.934969, Address: 'Σωρός', State: 'Λειτουργεί' },
+    { Lat: 39.340313, Long: 22.937627, Address: 'Ασκαλάμου, Νέες Παγασές', State: 'Λειτουργεί' },
+    { Lat: 39.368091, Long: 22.937751, Address: '2ας Νοεμβρίου 67, Βόλος', State: 'Δεν ελέγθηκε' },
+    { Lat: 39.363834, Long: 22.940542, Address: 'Πλ. Ρήγα Φεραίου (Δημητριάδος), Βόλος', State: 'Δεν ελέγθηκε' },
+    { Lat: 39.359487, Long: 22.95042, Address: 'Ογλ-Ερμού, Βόλος', State: 'Δεν ελέγθηκε' },
+    { Lat: 39.361184, Long: 22.947422, Address: 'Κ. Καρτάλη 64, Βόλος', State: 'Δεν ελέγθηκε' },
+    { Lat: 39.36164, Long: 22.946275, Address: 'Ελ. Βενιζέλου 20, Βόλος', State: 'Δεν ελέγθηκε' },
+    { Lat: 39.368900, Long: 22.945117, Address: 'Βασσάνη 109, Βόλος', State: 'Δεν ελέγθηκε' },
+    { Lat: 39.370517, Long: 22.946622, Address: 'Βασσάνη 141-127, Βόλος', State: 'Δεν ελέγθηκε' },
+    { Lat: 39.370525, Long: 22.94827, Address: 'Στρ. Μακρυγιάννη 71, Βόλος', State: 'Δεν ελέγθηκε' },
+    { Lat: 39.364914, Long: 22.953848, Address: 'Γκλαβάνη 149, Βόλος', State: 'Δεν ελέγθηκε' },
+    { Lat: 39.369205, Long: 22.950564, Address: 'Στρ. Μακρυγιάννη 103, Βόλος', State: 'Δεν ελέγθηκε' }
   ];
 
   fireHydrantIcon = L.icon({
-    iconUrl: './public/fire-hydrant-marker-icon - Copy.png',
-    iconSize: [38, 60]
-});
-
-
-svgIcon = L.divIcon({
-  html: `
-<svg
-  width="24"
-  height="40"
-  viewBox="0 0 100 100"
-  version="1.1"
-  preserveAspectRatio="none"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <path d="M0 0 L50 100 L100 0 Z" fill="#7A8BE7"></path>
-</svg>`,
-  className: "",
-  iconSize: [24, 40],
-  iconAnchor: [12, 40],
-});
+    iconUrl: 'fire-hydrant-marker-icon.png',
+    iconSize: [45, 45]
+  });
 
 
   ngOnInit(): void {
-    const map = L.map('map').setView([39.369205, 22.937627], 13);
+    const map = L.map('map').setView([39.340313, 22.937627], 13);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -63,8 +45,8 @@ svgIcon = L.divIcon({
 
     for (const marker of this.poiMarkers) {
       L.marker([marker.Lat, marker.Long], { icon: this.fireHydrantIcon })
-      .addTo(map)
-      .bindPopup(marker.Address);
+        .addTo(map)
+        .bindPopup(marker.Address);
     }
 
   }
