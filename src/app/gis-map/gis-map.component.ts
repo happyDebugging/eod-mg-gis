@@ -73,7 +73,7 @@ export class GisMapComponent implements OnInit {
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
     map.on('locationfound', function (event) {
       L.circle(event.latlng, event.accuracy, {
-        radius: 200,
+        radius: 100,
         color: '#2940a6',
         fillColor: '#2940a6',
         fillOpacity: 0.7        
