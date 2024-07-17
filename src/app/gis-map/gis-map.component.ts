@@ -35,6 +35,8 @@ export class GisMapComponent implements OnInit {
 
 
   ngOnInit(): void {
+
+    // Initiate map
     const map = L.map('map').setView([39.340313, 22.937627], 13);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -42,19 +44,30 @@ export class GisMapComponent implements OnInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-
+    // Add fire hydrant POI on map
     for (const marker of this.poiMarkers) {
       L.marker([marker.Lat, marker.Long], { icon: this.fireHydrantIcon })
         .addTo(map)
         .bindPopup('<b>'+marker.Address + '</b><br>' + marker.State);
     }
 
-    const userLocation = map.locate({setView: true, maxZoom: 16})
-    // .addEventListener('click', function(e) {
-    //   L.marker(e.latlng).addTo(map);
-    // });
-    //L.marker([39.340313, 22.937627]).addTo(map);
-   
+    // Locate user
+    const userLocation = map.locate({setView: true, maxZoom: 16});
+    // Use map event 'locationfound' to perform some operations once the browser locates the user.
+    map.on('locationfound', function (event) {
+      L.circle(event.latlng, event.accuracy, {
+        radius: 10,
+        //opacity: .9,   
+        color: '#2940a6',
+        fillColor: '#2940a6',
+        fillOpacity: 0.7        
+    }).addTo(map);
+      var locationPopup = L.popup().
+          setContent("Your Location").
+          setLatLng(event.latlng).addTo(map);
+
+      //L.marker(event.latlng).addTo(map);
+    });
 
   }
 
