@@ -51,13 +51,29 @@ export class GisMapComponent implements OnInit {
         .bindPopup('<b>'+marker.Address + '</b><br>' + marker.State);
     }
 
+    this.GetCurrentLocation(map);
+   
+    // // Get Real-Time user location
+    // if(!navigator.geolocation) {
+    //   console.log('Your browser does not support the geolocation feature.')
+    // } else {
+    //   setInterval(() => {
+    //     navigator.geolocation.getCurrentPosition(getPosition)
+    //   }, 5000);
+    // }
+
+   
+
+
+  }
+
+  GetCurrentLocation(map: L.Map) {
     // Locate user
     const userLocation = map.locate({setView: true, maxZoom: 16});
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
     map.on('locationfound', function (event) {
       L.circle(event.latlng, event.accuracy, {
         radius: 200,
-        //opacity: .9,   
         color: '#2940a6',
         fillColor: '#2940a6',
         fillOpacity: 0.7        
@@ -65,12 +81,8 @@ export class GisMapComponent implements OnInit {
       var locationPopup = L.popup().
           setContent("Your Location").
           setLatLng(event.latlng).addTo(map);
-
-      //L.marker(event.latlng).addTo(map);
     });
-
   }
-
 
 
 }

@@ -16,3 +16,10 @@
     height: 100%;
   }
   
+  #currentLocationButton {
+    position: absolute;
+    top: 85px;
+    left: 12px;
+    padding: 6px;
+    z-index: 4000;
+  }
