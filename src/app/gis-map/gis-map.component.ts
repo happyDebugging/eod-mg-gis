@@ -33,7 +33,8 @@ export class GisMapComponent implements OnInit {
     iconSize: [45, 45]
   });
 
-
+  
+ 
   ngOnInit(): void {
 
     // Initiate map
@@ -44,27 +45,22 @@ export class GisMapComponent implements OnInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
+    this.AddFireHydrantMarkersOnMap(map);
+
+    this.GetCurrentLocation(map);
+   
+    this.AddNewFireHydrantPOI(map);
+
+  }
+  
+
+  AddFireHydrantMarkersOnMap(map: L.Map) {
     // Add fire hydrant POI on map
     for (const marker of this.poiMarkers) {
       L.marker([marker.Lat, marker.Long], { icon: this.fireHydrantIcon })
         .addTo(map)
         .bindPopup('<b>'+marker.Address + '</b><br>' + marker.State);
     }
-
-    this.GetCurrentLocation(map);
-   
-    // // Get Real-Time user location
-    // if(!navigator.geolocation) {
-    //   console.log('Your browser does not support the geolocation feature.')
-    // } else {
-    //   setInterval(() => {
-    //     navigator.geolocation.getCurrentPosition(getPosition)
-    //   }, 5000);
-    // }
-
-   
-
-
   }
 
   GetCurrentLocation(map: L.Map) {
@@ -82,6 +78,13 @@ export class GisMapComponent implements OnInit {
           setContent("Your Location").
           setLatLng(event.latlng).addTo(map);
     });
+  }
+
+  AddNewFireHydrantPOI(map: L.Map) {  //Enable finally
+    // map.on('click',  (event) => {
+    //   console.log(event.latlng)
+    //   L.marker([event.latlng.lat, event.latlng.lng], { icon: this.fireHydrantIcon }).addTo(map);
+    // });
   }
 
 
