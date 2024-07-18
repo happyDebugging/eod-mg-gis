@@ -23,3 +23,11 @@
     padding: 6px;
     z-index: 4000;
   }
+
+  #navigationButton {
+    position: absolute;
+    top: 130px;
+    left: 12px;
+    padding: 6px;
+    z-index: 4000;
+  }

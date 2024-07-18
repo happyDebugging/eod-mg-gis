@@ -8,9 +8,11 @@ import * as L from 'leaflet';
 })
 export class GisMapComponent implements OnInit {
 
+  map!: L.Map;
   marker!: L.Marker<any>;
   circle!: L.Circle<any>;
   setView = true;
+  isNavigationOn = false;
 
   poiMarkers = [
     { Lat: 39.303044, Long: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Ενεργός' },
@@ -44,18 +46,18 @@ export class GisMapComponent implements OnInit {
   ngOnInit(): void {
 
     // Initiate map
-    const map = L.map('map').setView([39.340313, 22.937627], 13);
+     this.map = L.map('map').setView([39.340313, 22.937627], 13);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    }).addTo(this.map);
 
-    this.AddFireHydrantMarkersOnMap(map);
+    this.AddFireHydrantMarkersOnMap(this.map);
 
-    this.GetRealTimeUserLocation(map);
+    this.GetRealTimeUserLocation();
    
-    this.AddNewFireHydrantPOI(map);
+    this.AddNewFireHydrantPOI(this.map);
 
 
     // // User Real-Time Location
@@ -110,33 +112,42 @@ export class GisMapComponent implements OnInit {
     }
   }
 
-  GetRealTimeUserLocation(map: L.Map) {
+  GetRealTimeUserLocation() {
     
     // Locate user
-    if (this.setView) {
-      const userLocation = map.locate({setView: true, maxZoom: 16, watch: true});
-      this.setView = false;
+    if (!this.isNavigationOn) {
+      const userLocation = this.map.locate({setView: true, maxZoom: 16}); //setView: true, , watch: true
+      //this.setView = false;
+      console.log('1')
     } else {
-      const userLocation = map.locate({setView: false, maxZoom: 16, watch: true});
+      this.map.stopLocate();
+      const userLocation = this.map.locate({setView: false, maxZoom: 10, watch: true});
+      console.log('2')
+    }
+
+    if (this.isNavigationOn) {
+      const userLocation = this.map.locate({setView: true, maxZoom: 16, watch: true}); 
     }
     
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
-    map.on('locationfound', (position) => {
+    this.map.on('locationfound', (position) => {
       
       var latlng = position.latlng;
       var accuracy = position.accuracy;
 
       if (this.marker) {
-        map.removeLayer(this.marker);
+        this.map.removeLayer(this.marker);
       }
   
       if (this.circle) {
-        map.removeLayer(this.circle);
+        this.map.removeLayer(this.circle);
       }
   
       this.marker = L.marker(latlng);
-      this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(map);
+      this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
   
+      //map.panTo(latlng);
+
       //var featureGroup = L.featureGroup([this.marker,this.circle]).addTo(map);
   
       //map.fitBounds(featureGroup.getBounds());
@@ -161,5 +172,16 @@ export class GisMapComponent implements OnInit {
     // });
   }
 
+  StartNavigation() {
+
+    if (!this.isNavigationOn) {
+      this.isNavigationOn = true;
+      this.GetRealTimeUserLocation();
+    } else {
+      this.isNavigationOn = false;
+      this.map.stopLocate();
+    }
+    
+  }
 
 }
