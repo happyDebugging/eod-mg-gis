@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
 import * as L from 'leaflet';
 
 @Component({
@@ -7,6 +7,10 @@ import * as L from 'leaflet';
   styleUrl: './gis-map.component.css'
 })
 export class GisMapComponent implements OnInit {
+
+  marker!: L.Marker<any>;
+  circle!: L.Circle<any>;
+  setView = true;
 
   poiMarkers = [
     { Lat: 39.303044, Long: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Ενεργός' },
@@ -33,7 +37,9 @@ export class GisMapComponent implements OnInit {
     iconSize: [45, 45]
   });
 
-  
+  // @ViewChild('currentLocationButton') public searchElementRef: ElementRef;
+
+  // constructor(public map: L.Map) { }
  
   ngOnInit(): void {
 
@@ -47,11 +53,52 @@ export class GisMapComponent implements OnInit {
 
     this.AddFireHydrantMarkersOnMap(map);
 
-    this.GetCurrentLocation(map);
+    this.GetRealTimeUserLocation(map);
    
     this.AddNewFireHydrantPOI(map);
 
+
+    // // User Real-Time Location
+    // if (!navigator.geolocation) {
+    //   console.log('Your browser does not support geolocation.')
+    // } else {
+    //   setInterval(() => {
+    //     //this.GetRealTimeUserLocation(map); //Initial location
+
+    //     navigator.geolocation.getCurrentPosition((position) => {
+    //       this.GetRealTimeLocation(position, map);
+    //     }, null, {
+    //       enableHighAccuracy: true,
+    //       timeout: 5000,
+    //       maximumAge: 1000000
+    //    });
+
+    //   }, 3000);
+    // }
+
   }
+
+  // GetRealTimeLocation(position: GeolocationPosition, map: L.Map){
+  //   var lat = position.coords.latitude;
+  //   var lng = position.coords.longitude;
+  //   var accuracy = position.coords.accuracy;
+
+  //   if (this.marker) {
+  //     map.removeLayer(this.marker);
+  //   }
+
+  //   if (this.circle) {
+  //     map.removeLayer(this.circle);
+  //   }
+
+  //   this.marker = L.marker([lat,lng]);
+  //   this.circle = L.circle([lat,lng], {radius: accuracy});
+
+  //   var featureGroup = L.featureGroup([this.marker,this.circle]).addTo(map);
+
+  //   map.fitBounds(featureGroup.getBounds());
+
+  // }
   
 
   AddFireHydrantMarkersOnMap(map: L.Map) {
@@ -63,21 +110,48 @@ export class GisMapComponent implements OnInit {
     }
   }
 
-  GetCurrentLocation(map: L.Map) {
+  GetRealTimeUserLocation(map: L.Map) {
+    
     // Locate user
-    const userLocation = map.locate({setView: true, maxZoom: 16});
+    if (this.setView) {
+      const userLocation = map.locate({setView: true, maxZoom: 16, watch: true});
+      this.setView = false;
+    } else {
+      const userLocation = map.locate({setView: false, maxZoom: 16, watch: true});
+    }
+    
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
-    map.on('locationfound', function (event) {
-      L.circle(event.latlng, event.accuracy, {
-        radius: 100,
-        color: '#2940a6',
-        fillColor: '#2940a6',
-        fillOpacity: 0.7        
-    }).addTo(map);
-      var locationPopup = L.popup().
-          setContent("Your Location").
-          setLatLng(event.latlng).addTo(map);
+    map.on('locationfound', (position) => {
+      
+      var latlng = position.latlng;
+      var accuracy = position.accuracy;
+
+      if (this.marker) {
+        map.removeLayer(this.marker);
+      }
+  
+      if (this.circle) {
+        map.removeLayer(this.circle);
+      }
+  
+      this.marker = L.marker(latlng);
+      this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(map);
+  
+      //var featureGroup = L.featureGroup([this.marker,this.circle]).addTo(map);
+  
+      //map.fitBounds(featureGroup.getBounds());
+
+    //   this.circle = L.circle(event.latlng, event.accuracy, {
+    //     radius: 100,
+    //     color: '#2940a6',
+    //     fillColor: '#2940a6',
+    //     fillOpacity: 0.7        
+    // }).addTo(map);
+    //   var locationPopup = L.popup().
+    //       setContent("Your Location").
+    //       setLatLng(event.latlng).addTo(map);
     });
+
   }
 
   AddNewFireHydrantPOI(map: L.Map) {  //Enable finally
