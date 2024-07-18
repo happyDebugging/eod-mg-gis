@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
+import { Route } from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 
@@ -14,6 +15,7 @@ export class GisMapComponent implements OnInit {
   circle!: L.Circle<any>;
   setView = true;
   isNavigationOn = false;
+  routingControl!: L.Routing.Control;
 
   poiMarkers = [
     { Lat: 39.303044, Long: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Ενεργός' },
@@ -164,18 +166,33 @@ export class GisMapComponent implements OnInit {
     //   var locationPopup = L.popup().
     //       setContent("Your Location").
     //       setLatLng(event.latlng).addTo(map);
-    });
 
     
-    // Navigating from current position to nearest fire hydrant point
-    L.Routing.control({
-      waypoints: [
-          L.latLng(39.298565, 22.940683),
-          L.latLng(39.364914, 22.953848)
-      ],
-      routeWhileDragging: true
-    }).addTo(this.map);
 
+      if (this.isNavigationOn) {
+
+        if (this.routingControl) {
+          this.map.removeControl(this.routingControl);
+        }
+
+        // Navigating from current position to nearest fire hydrant point
+        this.routingControl = L.Routing.control({
+          waypoints: [
+              L.latLng(latlng.lat, latlng.lng),
+              L.latLng(39.364914, 22.953848)
+          ],
+          routeWhileDragging: true
+        }).on('routesfound', (waypoints) => {
+          console.log(waypoints);
+          
+              // this.marker = L.marker(latlng);
+              // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
+          
+          }).addTo(this.map);
+      }
+    
+
+    });
 
   }
 
@@ -186,7 +203,7 @@ export class GisMapComponent implements OnInit {
     // });
   }
 
-  StartNavigation() {
+  StartStopNavigation() {
 
     if (!this.isNavigationOn) {
       this.isNavigationOn = true;
@@ -194,6 +211,7 @@ export class GisMapComponent implements OnInit {
     } else {
       this.isNavigationOn = false;
       this.map.stopLocate();
+      this.map.removeControl(this.routingControl);
     }
     
   }
