@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
 import * as L from 'leaflet';
+import 'leaflet-routing-machine';
 
 @Component({
   selector: 'app-gis-map',
@@ -77,6 +78,8 @@ export class GisMapComponent implements OnInit {
 
     //   }, 3000);
     // }
+
+
 
   }
 
@@ -162,6 +165,17 @@ export class GisMapComponent implements OnInit {
     //       setContent("Your Location").
     //       setLatLng(event.latlng).addTo(map);
     });
+
+    
+    // Navigating from current position to nearest fire hydrant point
+    L.Routing.control({
+      waypoints: [
+          L.latLng(39.298565, 22.940683),
+          L.latLng(39.364914, 22.953848)
+      ],
+      routeWhileDragging: true
+    }).addTo(this.map);
+
 
   }
 
