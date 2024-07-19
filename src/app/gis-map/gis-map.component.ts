@@ -147,13 +147,14 @@ export class GisMapComponent implements OnInit {
         routeWhileDragging: true
       }).on('routesfound', (waypoints) => {
         console.log(waypoints);
-        
+
             // this.marker = L.marker(latlng);
             // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
         
         }).addTo(this.map);
+        this.routingControl.hide();  // Hides the directions panel
     }
-
+    
     
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
     this.map.on('locationfound', (position) => {
