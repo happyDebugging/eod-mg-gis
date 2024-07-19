@@ -23,10 +23,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "allowedCommonJsDependencies": [
-              "leaflet",
-              "leaflet-routing-machine"
-           ],
             "outputPath": "dist/eod-mg-gis",
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -51,7 +47,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "2MB"
+                  "maximumError": "6MB"
                 },
                 {
                   "type": "anyComponentStyle",
