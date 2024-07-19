@@ -17,7 +17,13 @@ export class GisMapComponent implements OnInit {
   setView = true;
   isNavigationOn = false;
   //latlng!: L.LatLng = (0,0);
-  routingControl!: L.Routing.Control;
+  routingControl: L.Routing.Control =L.Routing.control({
+    waypoints: [
+        L.latLng(0, 0),
+        L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
+    ],
+    routeWhileDragging: true
+  });
   distance = 0;
   minDistance = 10;
   closestPoint: Poi = { Lat: 0, Long: 0, Address: 'a', State: 'b' };
