@@ -15,6 +15,7 @@ export class GisMapComponent implements OnInit {
   circle!: L.Circle<any>;
   setView = true;
   isNavigationOn = false;
+  //latlng!: L.LatLng = (0,0);
   routingControl!: L.Routing.Control;
 
   poiMarkers = [
@@ -132,7 +133,27 @@ export class GisMapComponent implements OnInit {
 
     if (this.isNavigationOn) {
       const userLocation = this.map.locate({setView: true, maxZoom: 16, watch: true}); 
+
+      if (this.routingControl) {
+        this.map.removeControl(this.routingControl);
+      }
+
+      // Navigating from current position to nearest fire hydrant point
+      this.routingControl = L.Routing.control({
+        waypoints: [
+            L.latLng(0, 0),
+            L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
+        ],
+        routeWhileDragging: true
+      }).on('routesfound', (waypoints) => {
+        console.log(waypoints);
+        
+            // this.marker = L.marker(latlng);
+            // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
+        
+        }).addTo(this.map);
     }
+
     
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
     this.map.on('locationfound', (position) => {
@@ -167,29 +188,16 @@ export class GisMapComponent implements OnInit {
     //       setContent("Your Location").
     //       setLatLng(event.latlng).addTo(map);
 
-    
 
-      if (this.isNavigationOn) {
-
-        if (this.routingControl) {
-          this.map.removeControl(this.routingControl);
-        }
-
-        // Navigating from current position to nearest fire hydrant point
-        this.routingControl = L.Routing.control({
-          waypoints: [
-              L.latLng(latlng.lat, latlng.lng),
-              L.latLng(39.364914, 22.953848)
-          ],
-          routeWhileDragging: true
-        }).on('routesfound', (waypoints) => {
-          console.log(waypoints);
-          
-              // this.marker = L.marker(latlng);
-              // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
-          
-          }).addTo(this.map);
-      }
+    // Update navigation route
+    if (this.isNavigationOn) {
+      var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
+      this.routingControl.setWaypoints([
+        L.latLng(latlng.lat, latlng.lng),
+        L.latLng(39.364914, 22.953848)
+        //this.routingControl.options.waypoints[1]
+      ]);
+    }
     
 
     });
