@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
 import { Route } from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+import { Poi } from '../shared/models/poi.model';
 
 @Component({
   selector: 'app-gis-map',
@@ -17,6 +18,11 @@ export class GisMapComponent implements OnInit {
   isNavigationOn = false;
   //latlng!: L.LatLng = (0,0);
   routingControl!: L.Routing.Control;
+  distance = 0;
+  minDistance = 10;
+  closestPoint: Poi = { Lat: 0, Long: 0, Address: 'a', State: 'b' };
+  nearestMArker!: Poi;
+
 
   poiMarkers = [
     { Lat: 39.303044, Long: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Ενεργός' },
@@ -82,7 +88,10 @@ export class GisMapComponent implements OnInit {
     //   }, 3000);
     // }
 
-
+    // const templatlng: L.LatLng = L.latLng(39.368900, 22.945117);
+    // // Find nearest fire hydrant
+    //   // ....
+    //   this.FindNearestPoint(templatlng);
 
   }
 
@@ -155,6 +164,7 @@ export class GisMapComponent implements OnInit {
         this.routingControl.hide();  // Hides the directions panel
     }
     
+
     
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
     this.map.on('locationfound', (position) => {
@@ -190,15 +200,23 @@ export class GisMapComponent implements OnInit {
     //       setLatLng(event.latlng).addTo(map);
 
 
+    // Find nearest fire hydrant
+    // ....
+    this.FindNearestPoint(latlng);
+
+
     // Update navigation route
     if (this.isNavigationOn) {
       var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
       this.routingControl.setWaypoints([
         L.latLng(latlng.lat, latlng.lng),
-        L.latLng(39.364914, 22.953848)
+        //L.latLng(39.364914, 22.953848)
+        L.latLng(this.nearestMArker.Lat, this.nearestMArker.Long)
         //this.routingControl.options.waypoints[1]
       ]);
-    }
+
+      
+      }
     
 
     });
@@ -224,5 +242,29 @@ export class GisMapComponent implements OnInit {
     }
     
   }
+
+
+  FindNearestPoint(latlng: L.LatLng) {
+   
+    for (const marker of this.poiMarkers) {
+      
+      this.distance = Math.abs(marker.Lat-latlng.lat) + Math.abs(marker.Long-latlng.lng);
+      console.log('this.distance: '+this.distance)
+
+      if (this.distance < this.minDistance) { //< einai kanonika
+        console.log('c')
+        this.minDistance = this.distance;
+        this.closestPoint = marker;
+      }
+    }
+
+    this.nearestMArker = this.closestPoint;
+    console.log('nearestMArker: ' + this.nearestMArker.Address)
+    //L.marker([this.nearestMArker.Lat, this.nearestMArker.Long]);
+
+
+  }
+
+
 
 }
