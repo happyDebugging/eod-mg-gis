@@ -11,16 +11,13 @@ import { Poi } from '../shared/models/poi.model';
 })
 export class GisMapComponent implements OnInit {
 
-  //L = require('leaflet');
-  //Routing = require('leaflet-routing-machine');
   map!: L.Map;
   marker!: L.Marker<any>;
   circle!: L.Circle<any>;
   setView = true;
   isNavigationOn = false;
   //latlng!: L.LatLng = (0,0);
-  //routingControl!: L.Routing.Control;
-  routingControl: any = L.Routing.control({});
+  routingControl!: L.Routing.Control;
   distance = 0;
   minDistance = 10;
   closestPoint: Poi = { Lat: 0, Long: 0, Address: 'a', State: 'b' };
@@ -152,6 +149,9 @@ export class GisMapComponent implements OnInit {
 
       // Navigating from current position to nearest fire hydrant point
       this.routingControl = L.Routing.control({
+        router: L.Routing.osrmv1({
+          serviceUrl: `http://router.project-osrm.org/route/v1`
+        }),
         waypoints: [
             L.latLng(0, 0),
             L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
