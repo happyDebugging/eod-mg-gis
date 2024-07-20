@@ -20,7 +20,7 @@ export class GisMapComponent implements OnInit {
   isNavigationOn = false;
   //latlng!: L.LatLng = (0,0);
   //routingControl!: L.Routing.Control;
-  routingControl = L.Routing.control({});
+  routingControl: any = L.Routing.control({});
   distance = 0;
   minDistance = 10;
   closestPoint: Poi = { Lat: 0, Long: 0, Address: 'a', State: 'b' };
