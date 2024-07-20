@@ -11,13 +11,16 @@ import { Poi } from '../shared/models/poi.model';
 })
 export class GisMapComponent implements OnInit {
 
+  //L = require('leaflet');
+  //Routing = require('leaflet-routing-machine');
   map!: L.Map;
   marker!: L.Marker<any>;
   circle!: L.Circle<any>;
   setView = true;
   isNavigationOn = false;
   //latlng!: L.LatLng = (0,0);
-  routingControl!: L.Routing.Control;
+  //routingControl!: L.Routing.Control;
+  routingControl = L.Routing.control({});
   distance = 0;
   minDistance = 10;
   closestPoint: Poi = { Lat: 0, Long: 0, Address: 'a', State: 'b' };
