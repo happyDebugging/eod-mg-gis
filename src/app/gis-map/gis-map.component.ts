@@ -143,9 +143,9 @@ export class GisMapComponent implements OnInit {
     if (this.isNavigationOn) {
       const userLocation = this.map.locate({setView: true, maxZoom: 16, watch: true}); 
 
-      if (this.routingControl) {
-        this.map.removeControl(this.routingControl);
-      }
+      // if (this.routingControl) {   //uncomment
+      //   this.map.removeControl(this.routingControl);
+      // }
 
       // Navigating from current position to nearest fire hydrant point
       this.routingControl = L.Routing.control({
