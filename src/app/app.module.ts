@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GisMapComponent } from './gis-map/gis-map.component';
+import { HttpClientModule } from '@angular/common/http';
+import { DbFunctionService } from './shared/services/db-functions.service';
 
 @NgModule({
   declarations: [
@@ -12,9 +15,13 @@ import { GisMapComponent } from './gis-map/gis-map.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    RouterModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [
+    DbFunctionService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
