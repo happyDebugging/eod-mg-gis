@@ -47,8 +47,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   };
 
 
-  fireHydrantMarkers = [
-    { Id: 1, Lat: 1, Lng: 1, Address: '', State: '', HoseDiameter: '' }
+  fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', HoseDiameter: '' }
     // { Id: '', Lat: 39.303044, Lng: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
     // { Id: '', Lat: 39.301463, Lng: 22.940258, Address: 'Αλόης, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
     // { Id: '', Lat: 39.302951, Lng: 22.938931, Address: 'Αμαρυλίδος, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
@@ -100,14 +99,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(this.map);
 
-    this.AddFireHydrantMarkersOnMap(this.map);
+    this.GetFireHydrantsPOI();
 
     this.GetRealTimeUserLocation();
 
     this.AddNewFireHydrantPOI(this.map);
 
-    this.SaveFireHydrantsPOI();
-    this.GetFireHydrantsPOI();
+    //this.SaveFireHydrantsPOI();
     
 
     // // User Real-Time Location
@@ -328,6 +326,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   }
 
   GetFireHydrantsPOI() {
+    this.fireHydrantMarkers = [];
+
     this.getPOI = this.dbFunctionService.getFireHydrantsFromDb()
       .pipe(map((response: any) => {
         const markerArray: FireHydrantPoi[] = [];
@@ -358,6 +358,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
               this.fireHydrantMarkers.push(resObj);
             }
             //console.log(this.fireHydrantMarkers);
+            this.AddFireHydrantMarkersOnMap(this.map);
           }
           //this.isLoadingResults = false;
         },
@@ -369,16 +370,19 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   }
 
   SaveFireHydrantsPOI() {
-    // let fireHydrants = new FireHydrantPoi;
 
-    // fireHydrants.Id = this.fireHydrantMarkers.length + 1;
-    // fireHydrants.Lat = data.Lat;
-    // fireHydrants.Lng = data.Lng;
-    // fireHydrants.Address = data.Address;
-    // fireHydrants.State = data.State;
-    // fireHydrants.HoseDiameter = data.HoseDiameter;
+    for (const m of this.fireHydrantMarkers) {
 
-    this.dbFunctionService.postFireHydrantsToDb(this.fireHydrantMarkers[0])
+    let fireHydrants = new FireHydrantPoi;
+
+    fireHydrants.Id = this.fireHydrantMarkers.length + 1;
+    fireHydrants.Lat = m.Lat;
+    fireHydrants.Lng = m.Lng;
+    fireHydrants.Address = m.Address;
+    fireHydrants.State = m.State;
+    fireHydrants.HoseDiameter = m.HoseDiameter;
+    
+    this.dbFunctionService.postFireHydrantsToDb(fireHydrants)
       // .pipe(
       //   catchError((error) => {
       //     this.isLoading = false;
@@ -396,6 +400,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           console.log(err);
         }
       );
+
+    }
+
   }
 
   UpdateFireHydrantsPOI() {
