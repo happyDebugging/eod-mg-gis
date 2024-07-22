@@ -201,7 +201,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       this.marker = L.marker(latlng);
       this.circle = L.circle(latlng,
         {
-          radius: 10, //radius: accuracy
+          radius: 28, //radius: accuracy
           color: '#2940a6',
           fillColor: '#2940a6',
           fillOpacity: 0.7
