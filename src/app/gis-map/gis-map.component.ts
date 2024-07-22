@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, } from '@angular/core';
 import { Route } from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
@@ -9,7 +9,7 @@ import { Poi } from '../shared/models/poi.model';
   templateUrl: './gis-map.component.html',
   styleUrl: './gis-map.component.css'
 })
-export class GisMapComponent implements OnInit {
+export class GisMapComponent implements OnInit, AfterViewInit {
 
   map!: L.Map;
   marker!: L.Marker<any>;
@@ -52,11 +52,11 @@ export class GisMapComponent implements OnInit {
   // @ViewChild('currentLocationButton') public searchElementRef: ElementRef;
 
   // constructor(public map: L.Map) { }
- 
+
   ngOnInit(): void {
 
     // Initiate map
-     this.map = L.map('map').setView([39.340313, 22.937627], 13);
+    this.map = L.map('map').setView([39.340313, 22.937627], 13);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -66,7 +66,7 @@ export class GisMapComponent implements OnInit {
     this.AddFireHydrantMarkersOnMap(this.map);
 
     this.GetRealTimeUserLocation();
-   
+
     this.AddNewFireHydrantPOI(this.map);
 
 
@@ -95,6 +95,21 @@ export class GisMapComponent implements OnInit {
 
   }
 
+  ngAfterViewInit(): void {
+
+    // Get device orientation
+    window.addEventListener("deviceorientation", handleOrientation, true);
+    function handleOrientation(event: any) {
+      var absolute = event.absolute;
+      var alpha = event.alpha;
+      var beta = event.beta;
+      var gamma = event.gamma;
+      // Do stuff with the new orientation data
+      console.log(absolute, ' ', alpha, ' ', beta, ' ', gamma)
+    }
+
+  }
+
   // GetRealTimeLocation(position: GeolocationPosition, map: L.Map){
   //   var lat = position.coords.latitude;
   //   var lng = position.coords.longitude;
@@ -116,32 +131,32 @@ export class GisMapComponent implements OnInit {
   //   map.fitBounds(featureGroup.getBounds());
 
   // }
-  
+
 
   AddFireHydrantMarkersOnMap(map: L.Map) {
     // Add fire hydrant POI on map
     for (const marker of this.poiMarkers) {
       L.marker([marker.Lat, marker.Long], { icon: this.fireHydrantIcon })
         .addTo(map)
-        .bindPopup('<b>'+marker.Address + '</b><br>' + marker.State);
+        .bindPopup('<b>' + marker.Address + '</b><br>' + marker.State);
     }
   }
 
   GetRealTimeUserLocation() {
-    
+
     // Locate user
     if (!this.isNavigationOn) {
-      const userLocation = this.map.locate({setView: true, maxZoom: 16}); //setView: true, , watch: true
+      const userLocation = this.map.locate({ setView: true, maxZoom: 16 }); //setView: true, , watch: true
       //this.setView = false;
       console.log('1')
     } else {
       this.map.stopLocate();
-      const userLocation = this.map.locate({setView: false, maxZoom: 10, watch: true});
+      const userLocation = this.map.locate({ setView: false, maxZoom: 10, watch: true });
       console.log('2')
     }
 
     if (this.isNavigationOn) {
-      const userLocation = this.map.locate({setView: true, maxZoom: 16, watch: true}); 
+      const userLocation = this.map.locate({ setView: true, maxZoom: 16, watch: true });
 
       if (this.routingControl) {
         this.map.removeControl(this.routingControl);
@@ -153,74 +168,79 @@ export class GisMapComponent implements OnInit {
           serviceUrl: `http://router.project-osrm.org/route/v1`
         }),
         waypoints: [
-            L.latLng(0, 0),
-            L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
+          L.latLng(0, 0),
+          L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
         ],
         routeWhileDragging: true
       }).on('routesfound', (waypoints) => {
         console.log(waypoints);
 
-            // this.marker = L.marker(latlng);
-            // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
-        
-        }).addTo(this.map);
-        this.routingControl.hide();  // Hides the directions panel
-    }
-    
+        // this.marker = L.marker(latlng);
+        // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
 
-    
+      }).addTo(this.map);
+      this.routingControl.hide();  // Hides the directions panel
+    }
+
+
+
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
     this.map.on('locationfound', (position) => {
-      
+
       var latlng = position.latlng;
       var accuracy = position.accuracy;
 
       if (this.marker) {
         this.map.removeLayer(this.marker);
       }
-  
+
       if (this.circle) {
         this.map.removeLayer(this.circle);
       }
-  
+
       this.marker = L.marker(latlng);
-      this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
-  
+      this.circle = L.circle(latlng,
+        {
+          radius: 10, //radius: accuracy
+          color: '#2940a6',
+          fillColor: '#2940a6',
+          fillOpacity: 0.7
+        })
+        .addTo(this.map);
+
       //map.panTo(latlng);
 
       //var featureGroup = L.featureGroup([this.marker,this.circle]).addTo(map);
-  
+
       //map.fitBounds(featureGroup.getBounds());
 
-    //   this.circle = L.circle(event.latlng, event.accuracy, {
-    //     radius: 100,
-    //     color: '#2940a6',
-    //     fillColor: '#2940a6',
-    //     fillOpacity: 0.7        
-    // }).addTo(map);
-    //   var locationPopup = L.popup().
-    //       setContent("Your Location").
-    //       setLatLng(event.latlng).addTo(map);
+      //   this.circle = L.circle(event.latlng, event.accuracy, {
+      //     radius: 100,
+      //     color: '#2940a6',
+      //     fillColor: '#2940a6',
+      //     fillOpacity: 0.7        
+      // }).addTo(map);
+      //   var locationPopup = L.popup().
+      //       setContent("Your Location").
+      //       setLatLng(event.latlng).addTo(map);
 
 
-    // Find nearest fire hydrant
-    // ....
-    this.FindNearestPoint(latlng);
+      // Find nearest fire hydrant
+      // ....
+      this.FindNearestPoint(latlng);
 
 
-    // Update navigation route
-    if (this.isNavigationOn) {
-      var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
-      this.routingControl.setWaypoints([
-        L.latLng(latlng.lat, latlng.lng),
-        //L.latLng(39.364914, 22.953848)
-        L.latLng(this.nearestMArker.Lat, this.nearestMArker.Long)
-        //this.routingControl.options.waypoints[1]
-      ]);
+      // Update navigation route
+      if (this.isNavigationOn) {
+        var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
+        this.routingControl.setWaypoints([
+          L.latLng(latlng.lat, latlng.lng),
+          L.latLng(this.nearestMArker.Lat, this.nearestMArker.Long)
+        ]);
 
-      
+
       }
-    
+
 
     });
 
@@ -243,26 +263,25 @@ export class GisMapComponent implements OnInit {
       this.map.stopLocate();
       this.map.removeControl(this.routingControl);
     }
-    
+
   }
 
 
   FindNearestPoint(latlng: L.LatLng) {
-   
+
     for (const marker of this.poiMarkers) {
-      
-      this.distance = Math.abs(marker.Lat-latlng.lat) + Math.abs(marker.Long-latlng.lng);
-      console.log('this.distance: '+this.distance)
+
+      this.distance = Math.abs(marker.Lat - latlng.lat) + Math.abs(marker.Long - latlng.lng);
+      //console.log('this.distance: '+this.distance)
 
       if (this.distance < this.minDistance) { //< einai kanonika
-        console.log('c')
         this.minDistance = this.distance;
         this.closestPoint = marker;
       }
     }
 
     this.nearestMArker = this.closestPoint;
-    console.log('nearestMArker: ' + this.nearestMArker.Address)
+    //console.log('nearestMArker: ' + this.nearestMArker.Address)
     //L.marker([this.nearestMArker.Lat, this.nearestMArker.Long]);
 
 
