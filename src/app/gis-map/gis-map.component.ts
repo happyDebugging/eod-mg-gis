@@ -33,6 +33,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   nearestMArker!: FireHydrantPoi;
 
   getPOI: Subscription = new Subscription;
+  updatePOI: Subscription = new Subscription;
 
   // Your web app's Firebase configuration
   firebaseConfig = {
@@ -397,11 +398,56 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       );
   }
 
+  UpdateFireHydrantsPOI() {
+    this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(this.fireHydrantMarkers[0])
+      .pipe(map((response: any) => {
+        const markerArray: FireHydrantPoi[] = [];
+
+        for (const key in response) {
+          if (response.hasOwnProperty(key)) {
+            markerArray.push({ ...response[key], id: key })
+          }
+        }
+        return markerArray.reverse();
+      }))
+      .subscribe(
+        (res: any) => {
+          if ((res != null) || (res != undefined)) {
+            //console.log(res)
+            const responseData = new Array<FireHydrantPoi>(...res);
+
+            for (const data of responseData) {
+              const resObj = new FireHydrantPoi();
+
+              resObj.Id = data.Id;
+              resObj.Lat = data.Lat;
+              resObj.Lng = data.Lng;
+              resObj.Address = data.Address;
+              resObj.State = data.State;
+              resObj.HoseDiameter = data.HoseDiameter;
+
+              this.fireHydrantMarkers.push(resObj);
+            }
+            //console.log(this.fireHydrantMarkers);
+          }
+          //this.isLoadingResults = false;
+        },
+        err => {
+          //console.log(err);
+          //this.isLoadingResults = false;
+        }
+      );
+  }
+
 
   ngOnDestroy() {
 
     if (this.getPOI && !this.getPOI.closed) {
       this.getPOI.unsubscribe();
+    }
+
+    if (this.updatePOI && !this.updatePOI.closed) {
+      this.updatePOI.unsubscribe();
     }
 
   }

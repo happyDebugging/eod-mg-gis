@@ -26,13 +26,13 @@ export class DbFunctionService {
         return this.http.post(environment.databaseURL + environment.fireHydrantTable, fireHydrantMarkers, options);
     }
 
-    // updateFireHydrantsToDb(fireHydrantMarkers: FireHydrantPoi) {
-    //     let options: any = {
-    //         //params: {}, 
-    //         observe: 'response'
-    //     }
-    //     return this.http.post(environment.databaseURL, fireHydrantMarkers, options);
-    // }
+    updateFireHydrantsToDb(fireHydrantMarkers: FireHydrantPoi) {
+        let options: any = {
+            //params: {}, 
+            observe: 'response'
+        }
+        return this.http.put(environment.databaseURL + environment.fireHydrantTable, fireHydrantMarkers, options);
+    }
 
 
 }
