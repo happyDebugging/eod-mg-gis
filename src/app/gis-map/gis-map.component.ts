@@ -25,12 +25,16 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   circle!: L.Circle<any>;
   setView = true;
   isNavigationOn = false;
+  isUserLogedIn = false;
   //latlng!: L.LatLng = (0,0);
   routingControl!: L.Routing.Control;
   distance = 0;
   minDistance = 10;
   closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', HoseDiameter: '' };
   nearestMArker!: FireHydrantPoi;
+
+  myModal: any = document.getElementById('exampleModal');
+  myInput: any  = document.getElementById('myInput');
 
   getPOI: Subscription = new Subscription;
   updatePOI: Subscription = new Subscription;
@@ -106,7 +110,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.AddNewFireHydrantPOI(this.map);
 
     //this.SaveFireHydrantsPOI();
-    
+
 
     // // User Real-Time Location
     // if (!navigator.geolocation) {
@@ -176,9 +180,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     for (const marker of this.fireHydrantMarkers) {
       L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
         .addTo(map)
-        .bindPopup('<b>' + marker.Address + '</b><br>' + marker.State);
+        .bindPopup('<b>' + marker.Address + '</b><br>' + marker.State + '  ' + `<div class="d-grid"><button type="button" style="" class="btn btn-secondary btn-sm" (click)="FillDetailsForUpdate()">Edit</button></div>`);
     }
   }
+
 
   GetRealTimeUserLocation() {
 
@@ -373,36 +378,44 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     for (const m of this.fireHydrantMarkers) {
 
-    let fireHydrants = new FireHydrantPoi;
+      let fireHydrants = new FireHydrantPoi;
 
-    fireHydrants.Id = this.fireHydrantMarkers.length + 1;
-    fireHydrants.Lat = m.Lat;
-    fireHydrants.Lng = m.Lng;
-    fireHydrants.Address = m.Address;
-    fireHydrants.State = m.State;
-    fireHydrants.HoseDiameter = m.HoseDiameter;
-    
-    this.dbFunctionService.postFireHydrantsToDb(fireHydrants)
-      // .pipe(
-      //   catchError((error) => {
-      //     this.isLoading = false;
-      //     return of('Συνέβη κάποιο σφάλμα. Προσπαθήστε ξανά.');
-      //   })
-      //)
-      .subscribe(
-        (res: any) => {
-          console.log(res);
-          if ((res != null) || (res != undefined)) {
-            const responseData = new Array<FireHydrantPoi>(...res);
+      fireHydrants.Id = this.fireHydrantMarkers.length + 1;
+      fireHydrants.Lat = m.Lat;
+      fireHydrants.Lng = m.Lng;
+      fireHydrants.Address = m.Address;
+      fireHydrants.State = m.State;
+      fireHydrants.HoseDiameter = m.HoseDiameter;
+
+      this.dbFunctionService.postFireHydrantsToDb(fireHydrants)
+        // .pipe(
+        //   catchError((error) => {
+        //     this.isLoading = false;
+        //     return of('Συνέβη κάποιο σφάλμα. Προσπαθήστε ξανά.');
+        //   })
+        //)
+        .subscribe(
+          (res: any) => {
+            console.log(res);
+            if ((res != null) || (res != undefined)) {
+              const responseData = new Array<FireHydrantPoi>(...res);
+            }
+          },
+          err => {
+            console.log(err);
           }
-        },
-        err => {
-          console.log(err);
-        }
-      );
+        );
 
     }
 
+  }
+
+  FillDetailsForUpdate() {
+    console.log('uuuuu')
+    this.myModal.addEventListener('shown.bs.modal', () => {
+      this.myInput.focus();
+    })
+    
   }
 
   UpdateFireHydrantsPOI() {
@@ -444,6 +457,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           //this.isLoadingResults = false;
         }
       );
+  }
+
+  UserLogin() {
+
   }
 
 

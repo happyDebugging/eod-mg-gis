@@ -1,36 +1,49 @@
 .map-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: 0px;
-  }
-  
-  .map-frame {
-    border: 0px solid black;
-    height: 100%;
-  }
-  
-  #map {
-    height: 100%;
-  }
-  
-  #currentLocationButton {
-    position: absolute;
-    top: 85px;
-    left: 12px;
-    padding: 6px;
-    z-index: 4000;
-  }
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0px;
+}
 
-  #navigationButton {
-    position: absolute;
-    top: 130px;
-    left: 12px;
-    padding: 6px;
-    z-index: 4000;
-  }
+.map-frame {
+  border: 0px solid black;
+  height: 100%;
+}
+
+#map {
+  height: 100%;
+}
+
+#currentLocationButton {
+  position: absolute;
+  top: 85px;
+  left: 12px;
+  padding: 7px;
+  z-index: 4000;
+}
+
+#navigationButton {
+  position: absolute;
+  top: 135px;
+  left: 12px;
+  padding: 7px;
+  z-index: 4000;
+}
+
+#loginButton {
+  position: absolute;
+  bottom: 30px;
+  left: 12px;
+  padding: 7px;
+  z-index: 4000;
+}
 
 
-  
+.btn-Light {
+  background-color: whitesmoke;
+  border-width: 2px;
+  border-color: rgb(179, 179, 179);
+  border-radius: 3.5px;
+}
