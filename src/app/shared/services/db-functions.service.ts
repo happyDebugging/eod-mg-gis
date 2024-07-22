@@ -20,10 +20,10 @@ export class DbFunctionService {
     postFireHydrantsToDb(fireHydrantMarkers: FireHydrantPoi) {
         let options: any = {
             //params: {},
-            headers: {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"}, 
+            headers: {"Access-Control-Allow-Origin": "*"}, 
             observe: 'response'
         }
-        return this.http.post(environment.databaseURL, fireHydrantMarkers, options);
+        return this.http.post(environment.databaseURL + environment.fireHydrantTable, fireHydrantMarkers, options);
     }
 
     // updateFireHydrantsToDb(fireHydrantMarkers: FireHydrantPoi) {

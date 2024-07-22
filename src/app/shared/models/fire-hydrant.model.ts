@@ -1,5 +1,5 @@
 export class FireHydrantPoi {
-    Id!: string;
+    Id!: any;
     Lat!: number;
     Lng!: number;
     Address!: string;

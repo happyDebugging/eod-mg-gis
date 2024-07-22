@@ -47,7 +47,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
 
   fireHydrantMarkers = [
-    { Id: '', Lat: 0, Lng: 0, Address: '', State: '', HoseDiameter: '' }
+    { Id: 1, Lat: 1, Lng: 1, Address: '', State: '', HoseDiameter: '' }
     // { Id: '', Lat: 39.303044, Lng: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
     // { Id: '', Lat: 39.301463, Lng: 22.940258, Address: 'Αλόης, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
     // { Id: '', Lat: 39.302951, Lng: 22.938931, Address: 'Αμαρυλίδος, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
@@ -105,7 +105,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     this.AddNewFireHydrantPOI(this.map);
 
-    //this.SaveFireHydrantsPOI();
+    this.SaveFireHydrantsPOI();
     this.GetFireHydrantsPOI();
     
 
@@ -330,7 +330,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.getPOI = this.dbFunctionService.getFireHydrantsFromDb()
       .pipe(map((response: any) => {
         const markerArray: FireHydrantPoi[] = [];
-console.log(response)
+
         for (const key in response) {
           if (response.hasOwnProperty(key)) {
             markerArray.push({ ...response[key], id: key })
@@ -341,7 +341,7 @@ console.log(response)
       .subscribe(
         (res: any) => {
           if ((res != null) || (res != undefined)) {
-            console.log(res)
+            //console.log(res)
             const responseData = new Array<FireHydrantPoi>(...res);
 
             for (const data of responseData) {
@@ -356,12 +356,12 @@ console.log(response)
 
               this.fireHydrantMarkers.push(resObj);
             }
-            console.log(this.fireHydrantMarkers);
+            //console.log(this.fireHydrantMarkers);
           }
           //this.isLoadingResults = false;
         },
         err => {
-          console.log(err);
+          //console.log(err);
           //this.isLoadingResults = false;
         }
       );
@@ -386,13 +386,13 @@ console.log(response)
       //)
       .subscribe(
         (res: any) => {
-          //console.log(res);
+          console.log(res);
           if ((res != null) || (res != undefined)) {
             const responseData = new Array<FireHydrantPoi>(...res);
           }
         },
         err => {
-          //console.log(err);
+          console.log(err);
         }
       );
   }
