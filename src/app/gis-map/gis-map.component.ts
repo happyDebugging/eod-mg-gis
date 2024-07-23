@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, HostListener, } from '@angular/core';
 import { Route } from '@angular/router';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
@@ -11,6 +11,7 @@ import { getDatabase } from 'firebase/database';
 import { map, Subscription } from 'rxjs';
 import { FireHydrantPoi } from '../shared/models/fire-hydrant.model';
 import { DbFunctionService } from '../shared/services/db-functions.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -30,11 +31,16 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   routingControl!: L.Routing.Control;
   distance = 0;
   minDistance = 10;
-  closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', HoseDiameter: '' };
+  closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', StateDescription: '', HoseDiameter: '' };
   nearestMArker!: FireHydrantPoi;
+  fireHydrantAddress = '';
+  fireHydrantState = '';
+  fireHydrantType = '';
 
-  myModal: any = document.getElementById('exampleModal');
-  myInput: any  = document.getElementById('myInput');
+  @ViewChild('details') details: any;
+  // @HostListener("click") onClick(){
+  //   this.elementRef.nativeElement.addEventListener("click", this.FillDetailsForUpdate());
+  // }
 
   getPOI: Subscription = new Subscription;
   updatePOI: Subscription = new Subscription;
@@ -51,7 +57,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   };
 
 
-  fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', HoseDiameter: '' }
+  fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', StateDescription:'', HoseDiameter: '' }
     // { Id: '', Lat: 39.303044, Lng: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
     // { Id: '', Lat: 39.301463, Lng: 22.940258, Address: 'Αλόης, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
     // { Id: '', Lat: 39.302951, Lng: 22.938931, Address: 'Αμαρυλίδος, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
@@ -86,7 +92,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   // @ViewChild('currentLocationButton') public searchElementRef: ElementRef;
 
-  constructor(private dbFunctionService: DbFunctionService) { }
+  constructor(private dbFunctionService: DbFunctionService, private modalService: NgbModal, private elementRef: ElementRef) { }
 
   ngOnInit(): void {
 
@@ -176,12 +182,29 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
 
   AddFireHydrantMarkersOnMap(map: L.Map) {
+    
     // Add fire hydrant POI on map
     for (const marker of this.fireHydrantMarkers) {
+      const popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' + 
+          `<div class="d-grid">
+          <button type="button" class="btn btn-secondary btn-sm edit"> 
+            Edit
+          </buton></div>
+      `;
+
       L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
         .addTo(map)
-        .bindPopup('<b>' + marker.Address + '</b><br>' + marker.State + '  ' + `<div class="d-grid"><button type="button" style="" class="btn btn-secondary btn-sm" (click)="FillDetailsForUpdate()">Edit</button></div>`);
+        .bindPopup(popupInfo)
+        .on("popupopen", e => {
+          this.elementRef.nativeElement
+            .querySelector(".edit")
+            .addEventListener("click", (e: any) => {
+              this.FillDetailsForUpdate(marker);
+            });
+        });;
+          //data-bs-toggle="modal" data-bs-target="#exampleModal"
     }
+    const editPointButton = L.DomUtil.get('button-submit');
   }
 
 
@@ -358,6 +381,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
               resObj.Lng = data.Lng;
               resObj.Address = data.Address;
               resObj.State = data.State;
+              resObj.StateDescription = data.StateDescription;
               resObj.HoseDiameter = data.HoseDiameter;
 
               this.fireHydrantMarkers.push(resObj);
@@ -410,12 +434,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   }
 
-  FillDetailsForUpdate() {
-    console.log('uuuuu')
-    this.myModal.addEventListener('shown.bs.modal', () => {
-      this.myInput.focus();
-    })
+  FillDetailsForUpdate(marker: FireHydrantPoi) {
     
+    this.fireHydrantAddress = marker.Address;
+    this.fireHydrantState = marker.State;
+    this.fireHydrantType = marker.HoseDiameter;
+
+    this.modalService.open(this.details, { centered: true });
+
   }
 
   UpdateFireHydrantsPOI() {
@@ -460,7 +486,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   }
 
   UserLogin() {
+    
+  }
 
+  dismissDetailsModal() {
+    this.modalService.dismissAll();
   }
 
 

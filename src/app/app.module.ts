@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { GisMapComponent } from './gis-map/gis-map.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DbFunctionService } from './shared/services/db-functions.service';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { DbFunctionService } from './shared/services/db-functions.service';
     BrowserModule,
     AppRoutingModule,
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
     DbFunctionService

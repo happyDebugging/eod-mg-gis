@@ -4,5 +4,6 @@ export class FireHydrantPoi {
     Lng!: number;
     Address!: string;
     State!: string;
+    StateDescription!: string;
     HoseDiameter!: string;
 }
