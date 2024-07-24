@@ -21,7 +21,7 @@
   top: 85px;
   left: 12px;
   padding: 7px;
-  z-index: 4000;
+  z-index: 1000;
 }
 
 #navigationButton {
@@ -29,7 +29,7 @@
   top: 135px;
   left: 12px;
   padding: 7px;
-  z-index: 4000;
+  z-index: 1000;
 }
 
 #loginButton {
@@ -37,7 +37,7 @@
   bottom: 30px;
   left: 12px;
   padding: 7px;
-  z-index: 4000;
+  z-index: 1000;
 }
 
 
@@ -46,4 +46,9 @@
   border-width: 2px;
   border-color: rgb(179, 179, 179);
   border-radius: 3.5px;
+}
+
+
+.zindex {
+  z-index: 99000 !important;
 }

@@ -440,7 +440,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.fireHydrantState = marker.State;
     this.fireHydrantType = marker.HoseDiameter;
 
-    this.modalService.open(this.details, { centered: true });
+    this.modalService.open(this.details, { centered: true, size: 'sm', windowClass: 'zindex' });
 
   }
 
