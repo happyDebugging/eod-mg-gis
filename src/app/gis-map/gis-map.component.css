@@ -40,6 +40,14 @@
   z-index: 1000;
 }
 
+#addMarkerButton {
+  position: absolute;
+  bottom: 90px;
+  left: 12px;
+  padding: 7px;
+  z-index: 1000;
+}
+
 
 .btn-Light {
   background-color: whitesmoke;

@@ -35,9 +35,16 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   nearestMArker!: FireHydrantPoi;
   fireHydrantAddress = '';
   fireHydrantState = '';
+  fireHydrantStateDescription = '';
   fireHydrantType = '';
+  fireHydrantLat = 0;
+  fireHydrantLng = 0;
+  isAddNewLocationActive = false;
+  eventL!: L.LeafletMouseEvent;
 
   @ViewChild('details') details: any;
+  @ViewChild('detailsToPost') detailsToPost: any;
+
   // @HostListener("click") onClick(){
   //   this.elementRef.nativeElement.addEventListener("click", this.FillDetailsForUpdate());
   // }
@@ -57,32 +64,32 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   };
 
 
-  fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', StateDescription:'', HoseDiameter: '' }
-    // { Id: '', Lat: 39.303044, Lng: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
-    // { Id: '', Lat: 39.301463, Lng: 22.940258, Address: 'Αλόης, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
-    // { Id: '', Lat: 39.302951, Lng: 22.938931, Address: 'Αμαρυλίδος, Σωρός', State: 'Ενεργός', HoseDiameter: '' },
-    // { Id: '', Lat: 39.304238, Lng: 22.940437, Address: 'Σωρός', State: 'Ενεργός', HoseDiameter: '' },
-    // { Id: '', Lat: 39.298565, Lng: 22.940683, Address: 'Σωρός', State: 'Ενεργός', HoseDiameter: '' },
-    // { Id: '', Lat: 39.30932, Lng: 22.934969, Address: 'Σωρός', State: 'Ενεργός', HoseDiameter: '' },
-    // { Id: '', Lat: 39.340313, Lng: 22.937627, Address: 'Ασκαλάμου, Νέες Παγασές', State: 'Ενεργός', HoseDiameter: '' },
-    // { Id: '', Lat: 39.368091, Lng: 22.937751, Address: '2ας Νοεμβρίου 67, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.363834, Lng: 22.940542, Address: 'Πλ. Ρήγα Φεραίου (Δημητριάδος), Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.359487, Lng: 22.95042, Address: 'Ογλ-Ερμού, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.361184, Lng: 22.947422, Address: 'Κ. Καρτάλη 64, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.36164, Lng: 22.946275, Address: 'Ελ. Βενιζέλου 20, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.368900, Lng: 22.945117, Address: 'Βασσάνη 109, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.370517, Lng: 22.946622, Address: 'Βασσάνη 141-127, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.370525, Lng: 22.94827, Address: 'Στρ. Μακρυγιάννη 71, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.364914, Lng: 22.953848, Address: 'Γκλαβάνη 149, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.369205, Lng: 22.950564, Address: 'Στρ. Μακρυγιάννη 103, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.367765, Lng: 22.919093, Address: 'Σπετσών 4, Βόλος', State: 'Ενεργός', HoseDiameter: '' },
-    // { Id: '', Lat: 39.356358, Lng: 22.956956, Address: 'Πολυμέρη 77, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.36149, Lng: 22.936784, Address: 'Μητροπολήτου Γρηγορίου, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.363816, Lng: 22.93784, Address: 'Βασάνη 2-4, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.366683, Lng: 22.941403, Address: 'Γ. Καρτάλη - Κουντουριώτου, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.36797, Lng: 22.942569, Address: 'Κωνσταντά 43-39, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.369021, Lng: 22.94363, Address: 'Κουντουριώτου 89-85, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' },
-    // { Id: '', Lat: 39.369897, Lng: 22.944506, Address: 'Αναλήψεως, Βόλος', State: 'Δεν ελέγθηκε', HoseDiameter: '' }
+  fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', StateDescription: '', HoseDiameter: '' }
+    // { Id: '', Lat: 39.303044, Lng: 22.937749, Address: 'Αγ. Στεφάνου, Σωρός', State: 'active', StateDescription: 'Ενεργός', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.301463, Lng: 22.940258, Address: 'Αλόης, Σωρός', State: 'active', StateDescription: 'Ενεργός', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.302951, Lng: 22.938931, Address: 'Αμαρυλίδος, Σωρός', State: 'active', StateDescription: 'Ενεργός', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.304238, Lng: 22.940437, Address: 'Σωρός', State: 'active', StateDescription: 'Ενεργός', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.298565, Lng: 22.940683, Address: 'Σωρός', State: 'active', StateDescription: 'Ενεργός', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.30932, Lng: 22.934969, Address: 'Σωρός', State: 'active', StateDescription: 'Ενεργός', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.340313, Lng: 22.937627, Address: 'Ασκαλάμου, Νέες Παγασές', State: 'active', StateDescription: 'Ενεργός', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.368091, Lng: 22.937751, Address: '2ας Νοεμβρίου 67, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.363834, Lng: 22.940542, Address: 'Πλ. Ρήγα Φεραίου (Δημητριάδος), Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.359487, Lng: 22.95042, Address: 'Ογλ-Ερμού, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.361184, Lng: 22.947422, Address: 'Κ. Καρτάλη 64, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.36164, Lng: 22.946275, Address: 'Ελ. Βενιζέλου 20, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.368900, Lng: 22.945117, Address: 'Βασσάνη 109, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.370517, Lng: 22.946622, Address: 'Βασσάνη 141-127, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.370525, Lng: 22.94827, Address: 'Στρ. Μακρυγιάννη 71, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.364914, Lng: 22.953848, Address: 'Γκλαβάνη 149, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.369205, Lng: 22.950564, Address: 'Στρ. Μακρυγιάννη 103, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.367765, Lng: 22.919093, Address: 'Σπετσών 4, Βόλος', State: 'active', StateDescription: 'Ενεργός', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.356358, Lng: 22.956956, Address: 'Πολυμέρη 77, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.36149, Lng: 22.936784, Address: 'Μητροπολήτου Γρηγορίου, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.363816, Lng: 22.93784, Address: 'Βασάνη 2-4, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.366683, Lng: 22.941403, Address: 'Γ. Καρτάλη - Κουντουριώτου, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.36797, Lng: 22.942569, Address: 'Κωνσταντά 43-39, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.369021, Lng: 22.94363, Address: 'Κουντουριώτου 89-85, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' },
+    // { Id: '', Lat: 39.369897, Lng: 22.944506, Address: 'Αναλήψεως, Βόλος', State: 'undefined', StateDescription: 'Δεν ελέγθηκε', HoseDiameter: 'undefined' }
   ];
 
   fireHydrantIcon = L.icon({
@@ -109,13 +116,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(this.map);
 
+    // this.SaveFireHydrantsPOIs();
+
     this.GetFireHydrantsPOI();
 
     this.GetRealTimeUserLocation();
 
-    this.AddNewFireHydrantPOI(this.map);
-
-    //this.SaveFireHydrantsPOI();
+    //this.AddNewFireHydrantPOI();
 
 
     // // User Real-Time Location
@@ -182,11 +189,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
 
   AddFireHydrantMarkersOnMap(map: L.Map) {
-    
+
     // Add fire hydrant POI on map
     for (const marker of this.fireHydrantMarkers) {
-      const popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' + 
-          `<div class="d-grid">
+      const popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
+        `<div class="d-grid">
           <button type="button" class="btn btn-secondary btn-sm edit"> 
             Edit
           </buton></div>
@@ -202,7 +209,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
               this.FillDetailsForUpdate(marker);
             });
         });;
-          //data-bs-toggle="modal" data-bs-target="#exampleModal"
+      //data-bs-toggle="modal" data-bs-target="#exampleModal"
     }
     const editPointButton = L.DomUtil.get('button-submit');
   }
@@ -312,12 +319,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   }
 
-  AddNewFireHydrantPOI(map: L.Map) {  //Enable finally
-    // map.on('click',  (event) => {
-    //   console.log(event.latlng)
-    //   L.marker([event.latlng.lat, event.latlng.lng], { icon: this.fireHydrantIcon }).addTo(map);
-    // });
-  }
 
   StartStopNavigation() {
 
@@ -398,7 +399,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       );
   }
 
-  SaveFireHydrantsPOI() {
+  SaveFireHydrantsPOIs() {
 
     for (const m of this.fireHydrantMarkers) {
 
@@ -409,6 +410,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       fireHydrants.Lng = m.Lng;
       fireHydrants.Address = m.Address;
       fireHydrants.State = m.State;
+      fireHydrants.StateDescription = m.StateDescription;
       fireHydrants.HoseDiameter = m.HoseDiameter;
 
       this.dbFunctionService.postFireHydrantsToDb(fireHydrants)
@@ -435,64 +437,164 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   }
 
   FillDetailsForUpdate(marker: FireHydrantPoi) {
-    
+
     this.fireHydrantAddress = marker.Address;
     this.fireHydrantState = marker.State;
+    this.fireHydrantStateDescription = marker.StateDescription;
     this.fireHydrantType = marker.HoseDiameter;
 
     this.modalService.open(this.details, { centered: true, size: 'sm', windowClass: 'zindex' });
 
   }
 
-  UpdateFireHydrantsPOI() {
-    this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(this.fireHydrantMarkers[0])
-      .pipe(map((response: any) => {
-        const markerArray: FireHydrantPoi[] = [];
 
-        for (const key in response) {
-          if (response.hasOwnProperty(key)) {
-            markerArray.push({ ...response[key], id: key })
+  AddNewFireHydrantPOI() {  //event: L.LeafletMouseEvent (map: L.Map) //Enable finally
+    this.isAddNewLocationActive = !this.isAddNewLocationActive;
+    console.log(this.isAddNewLocationActive)
+    if (this.isAddNewLocationActive) {
+
+      this.PlaceNewPOIOnMap()
+        .then((res) => {
+          //this.FillDetailsBeforeNewPost();
+        },
+          () => console.log('failure')
+        );
+    }
+  }
+
+  PlaceNewPOIOnMap() {
+    let promise = new Promise(async (resolve, reject) => {
+
+      this.map.on('click', () => {
+        this.map.on('click', (event) => {
+          
+          this.ResetFireHydrantDetails();
+          //L.DomEvent.stopPropagation(event);
+
+          if (this.isAddNewLocationActive) {
+            console.log(event.latlng)
+            
+            this.eventL = event;
+
+            this.fireHydrantLat = event.latlng.lat;
+            this.fireHydrantLng = event.latlng.lng;
+
+            //this.isAddNewLocationActive = false;
+            this.FillDetailsBeforeNewPost();
+
+            resolve(this.fireHydrantLng);
           }
-        }
-        return markerArray.reverse();
-      }))
+        })
+      });
+
+      //this.elementRef.nativeElement.addEventListener("click", this.FillDetailsBeforeNewPost());
+
+
+    });
+    return promise;
+  }
+
+  FillDetailsBeforeNewPost() {
+
+    if (this.isAddNewLocationActive) {
+      this.modalService.open(this.detailsToPost, { centered: true, size: 'sm', windowClass: 'zindex' });
+    }
+
+  }
+
+  PostFireHydrantPOI() {
+
+    L.marker([this.eventL.latlng.lat, this.eventL.latlng.lng], { icon: this.fireHydrantIcon }).addTo(this.map);
+
+    //this.map.on('click', () => {}).clearAllEventListeners();
+    //this.isAddNewLocationActive = !this.isAddNewLocationActive;
+    this.dismissDetailsModal();
+
+    let fireHydrant = new FireHydrantPoi;
+
+    fireHydrant.Id = this.fireHydrantMarkers.length + 1;
+    fireHydrant.Lat = this.fireHydrantLat;
+    fireHydrant.Lng = this.fireHydrantLng;
+    fireHydrant.Address = this.fireHydrantAddress;
+    fireHydrant.State = this.fireHydrantState;
+    if (this.fireHydrantState = 'active') fireHydrant.StateDescription = 'Ενεργός';
+    else if (this.fireHydrantState = 'inactive') fireHydrant.StateDescription = 'Μη Ενεργός';
+    else if (this.fireHydrantState = 'undefined') fireHydrant.StateDescription = 'Δεν Ελέγχθηκε';
+    fireHydrant.HoseDiameter = this.fireHydrantType;
+
+    this.dbFunctionService.postFireHydrantsToDb(fireHydrant)
+      // .pipe(
+      //   catchError((error) => {
+      //     this.isLoading = false;
+      //     return of('Συνέβη κάποιο σφάλμα. Προσπαθήστε ξανά.');
+      //   })
+      //)
       .subscribe(
         (res: any) => {
+          console.log(res);
           if ((res != null) || (res != undefined)) {
-            //console.log(res)
-            const responseData = new Array<FireHydrantPoi>(...res);
-
-            for (const data of responseData) {
-              const resObj = new FireHydrantPoi();
-
-              resObj.Id = data.Id;
-              resObj.Lat = data.Lat;
-              resObj.Lng = data.Lng;
-              resObj.Address = data.Address;
-              resObj.State = data.State;
-              resObj.HoseDiameter = data.HoseDiameter;
-
-              this.fireHydrantMarkers.push(resObj);
-            }
-            //console.log(this.fireHydrantMarkers);
+            this.ResetFireHydrantDetails();
+            this.GetFireHydrantsPOI();
           }
-          //this.isLoadingResults = false;
         },
         err => {
-          //console.log(err);
-          //this.isLoadingResults = false;
+          console.log(err);
         }
       );
+
+  }
+
+
+  UpdateFireHydrantsPOI() {
+
+    this.dismissDetailsModal();
+
+    let updatedMarker = new FireHydrantPoi;
+    updatedMarker.Address = this.fireHydrantAddress;
+    updatedMarker.State = this.fireHydrantState;
+    updatedMarker.StateDescription = this.fireHydrantStateDescription;
+    updatedMarker.HoseDiameter = this.fireHydrantType;
+
+    //   this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(updatedMarker)
+    //     .pipe(map((response: any) => {
+
+    //     }))
+    //     .subscribe(
+    //       (res: any) => {
+    //         if ((res != null) || (res != undefined)) {
+    //           console.log(res)
+
+    //         }
+    //         //this.isLoadingResults = false;
+    //       },
+    //       err => {
+    //         console.log(err);
+    //         //this.isLoadingResults = false;
+    //       }
+    //     );
   }
 
   UserLogin() {
-    
+
   }
 
   dismissDetailsModal() {
+    this.map.on('click', () => {}).clearAllEventListeners();
+    this.isAddNewLocationActive = !this.isAddNewLocationActive;
     this.modalService.dismissAll();
   }
 
+  ResetFireHydrantDetails() {
+    this.fireHydrantLat = 0;
+    this.fireHydrantLng = 0;
+    this.fireHydrantAddress = '';
+    this.fireHydrantState = '';
+    this.fireHydrantState = '';
+    this.fireHydrantType = '';
+
+    //this.eventL = 0;
+
+  }
 
   ngOnDestroy() {
 
