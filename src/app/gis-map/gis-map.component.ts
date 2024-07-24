@@ -451,6 +451,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   AddNewFireHydrantPOI() {  //event: L.LeafletMouseEvent (map: L.Map) //Enable finally
     this.isAddNewLocationActive = !this.isAddNewLocationActive;
     console.log(this.isAddNewLocationActive)
+    
     if (this.isAddNewLocationActive) {
 
       this.PlaceNewPOIOnMap()
@@ -469,7 +470,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.map.on('click', (event) => {
           
           this.ResetFireHydrantDetails();
-          //L.DomEvent.stopPropagation(event);
 
           if (this.isAddNewLocationActive) {
             console.log(event.latlng)
@@ -479,16 +479,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             this.fireHydrantLat = event.latlng.lat;
             this.fireHydrantLng = event.latlng.lng;
 
-            //this.isAddNewLocationActive = false;
             this.FillDetailsBeforeNewPost();
 
             resolve(this.fireHydrantLng);
           }
         })
       });
-
-      //this.elementRef.nativeElement.addEventListener("click", this.FillDetailsBeforeNewPost());
-
 
     });
     return promise;
@@ -579,7 +575,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   }
 
   dismissDetailsModal() {
-    this.map.on('click', () => {}).clearAllEventListeners();
+    //this.map.on('click', () => {}).clearAllEventListeners();
+    this.map.off('click');
     this.isAddNewLocationActive = !this.isAddNewLocationActive;
     this.modalService.dismissAll();
   }
