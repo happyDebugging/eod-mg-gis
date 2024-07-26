@@ -5,7 +5,6 @@ import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class DbFunctionService {
-    //postItDetails: PostItDetails;
 
     constructor(private http: HttpClient) { }
 
@@ -14,25 +13,23 @@ export class DbFunctionService {
             headers: {"Access-Control-Allow-Origin": "*"},  
             observe: 'response'
         }
-        return this.http.get<FireHydrantPoi>(environment.databaseURL + environment.fireHydrantTable);
+        return this.http.get<FireHydrantPoi>(environment.databaseURL + environment.fireHydrantTable + '.json');
     }
 
     postFireHydrantsToDb(fireHydrantMarkers: FireHydrantPoi) {
         let options: any = {
-            //params: {},
             headers: {"Access-Control-Allow-Origin": "*"}, 
             observe: 'response'
         }
-        return this.http.post(environment.databaseURL + environment.fireHydrantTable, fireHydrantMarkers, options);
+        return this.http.post(environment.databaseURL + environment.fireHydrantTable + '.json', fireHydrantMarkers, options);
     }
 
-    updateFireHydrantsToDb(fireHydrantMarkers: FireHydrantPoi) {
+    updateFireHydrantsToDb(fireHydrantMarker: FireHydrantPoi) {
         let options: any = {
-            //params: {}, 
             headers: {"Access-Control-Allow-Origin": "*"}, 
             observe: 'response'
         }
-        //return this.http.put(environment.databaseURL + environment.fireHydrantTable, fireHydrantMarkers, options);
+        return this.http.put(environment.databaseURL + environment.fireHydrantTable + '/' + fireHydrantMarker.Id + '.json', fireHydrantMarker, options);
     }
 
 
