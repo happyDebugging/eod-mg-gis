@@ -209,8 +209,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             .addEventListener("click", (e: any) => {
               this.FillDetailsForUpdate(marker);
             });
-        });;
-      //data-bs-toggle="modal" data-bs-target="#exampleModal"
+        });
+      
     }
     const editPointButton = L.DomUtil.get('button-submit');
   }
@@ -365,10 +365,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         for (const key in response) {
           if (response.hasOwnProperty(key)) {
 
-            //markerArray[key.indexOf(key)].Id = key;
-
             markerArray.push({ ...response[key], Id: key })
-            
+
           }
         }
         console.log(markerArray)
@@ -449,9 +447,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.fireHydrantLng = marker.Lng;
     this.fireHydrantAddress = marker.Address;
     this.fireHydrantState = marker.State;
-    if (this.fireHydrantState == 'active') {this.fireHydrantStateDescription = 'Ενεργός';}
-    else if (this.fireHydrantState == 'inactive') {this.fireHydrantStateDescription = 'Μη Ενεργός';}
-    else if (this.fireHydrantState == 'undefined') {this.fireHydrantStateDescription = 'Δεν Ελέγχθηκε';}
+    if (this.fireHydrantState == 'active') { this.fireHydrantStateDescription = 'Ενεργός'; }
+    else if (this.fireHydrantState == 'inactive') { this.fireHydrantStateDescription = 'Μη Ενεργός'; }
+    else if (this.fireHydrantState == 'undefined') { this.fireHydrantStateDescription = 'Δεν Ελέγχθηκε'; }
     this.fireHydrantType = marker.HoseDiameter;
 
     this.modalService.open(this.details, { centered: true, size: 'sm', windowClass: 'zindex' });
@@ -462,7 +460,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   AddNewFireHydrantPOI() {  //event: L.LeafletMouseEvent (map: L.Map) //Enable finally
     this.isAddNewLocationActive = !this.isAddNewLocationActive;
     console.log(this.isAddNewLocationActive)
-    
+
     if (this.isAddNewLocationActive) {
 
       this.PlaceNewPOIOnMap()
@@ -479,12 +477,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       this.map.on('click', () => {
         this.map.on('click', (event) => {
-          
+
           this.ResetFireHydrantDetails();
 
           if (this.isAddNewLocationActive) {
             console.log(event.latlng)
-            
+
             this.eventL = event;
 
             this.fireHydrantLat = event.latlng.lat;
@@ -518,15 +516,15 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.dismissDetailsModal();
 
     let fireHydrant = new FireHydrantPoi;
-console.log(this.fireHydrantId)
+    console.log(this.fireHydrantId)
     fireHydrant.Id = this.fireHydrantId;
     fireHydrant.Lat = this.fireHydrantLat;
     fireHydrant.Lng = this.fireHydrantLng;
     fireHydrant.Address = this.fireHydrantAddress;
     fireHydrant.State = this.fireHydrantState;
-    if (this.fireHydrantState == 'active') {fireHydrant.StateDescription = 'Ενεργός';}
-    else if (this.fireHydrantState == 'inactive') {fireHydrant.StateDescription = 'Μη Ενεργός';}
-    else if (this.fireHydrantState == 'undefined') {fireHydrant.StateDescription = 'Δεν Ελέγχθηκε';}
+    if (this.fireHydrantState == 'active') { fireHydrant.StateDescription = 'Ενεργός'; }
+    else if (this.fireHydrantState == 'inactive') { fireHydrant.StateDescription = 'Μη Ενεργός'; }
+    else if (this.fireHydrantState == 'undefined') { fireHydrant.StateDescription = 'Δεν Ελέγχθηκε'; }
     fireHydrant.HoseDiameter = this.fireHydrantType;
 
     this.dbFunctionService.postFireHydrantsToDb(fireHydrant)
@@ -562,29 +560,34 @@ console.log(this.fireHydrantId)
     updatedMarker.Lng = this.fireHydrantLng;
     updatedMarker.Address = this.fireHydrantAddress;
     updatedMarker.State = this.fireHydrantState;
-    if (this.fireHydrantState == 'active') {updatedMarker.StateDescription = 'Ενεργός';}
-    else if (this.fireHydrantState == 'inactive') {updatedMarker.StateDescription = 'Μη Ενεργός';}
-    else if (this.fireHydrantState == 'undefined') {updatedMarker.StateDescription = 'Δεν Ελέγχθηκε';}
+    if (this.fireHydrantState == 'active') { updatedMarker.StateDescription = 'Ενεργός'; }
+    else if (this.fireHydrantState == 'inactive') { updatedMarker.StateDescription = 'Μη Ενεργός'; }
+    else if (this.fireHydrantState == 'undefined') { updatedMarker.StateDescription = 'Δεν Ελέγχθηκε'; }
     updatedMarker.HoseDiameter = this.fireHydrantType;
 
-      this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(updatedMarker)
-        .pipe(map((response: any) => {
+    this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(updatedMarker)
+      .pipe(map((response: any) => {
+        
+        this.GetFireHydrantsPOI();
 
-        }))
-        .subscribe(
-          (res: any) => {
-            if ((res != null) || (res != undefined)) {
-              console.log(res)
-              this.ResetFireHydrantDetails();
-              this.GetFireHydrantsPOI();
-            }
-            //this.isLoadingResults = false;
-          },
-          err => {
-            console.log(err);
-            //this.isLoadingResults = false;
+      }))
+      .subscribe(
+        (res: any) => {
+          if ((res != null) || (res != undefined)) {
+            console.log(res)
+
+            //this.ResetFireHydrantDetails();
+            //this.GetFireHydrantsPOI();
+
           }
-        );
+
+          //this.isLoadingResults = false;
+        },
+        err => {
+          console.log(err);
+          //this.isLoadingResults = false;
+        }
+      );
   }
 
   UserLogin() {
@@ -594,6 +597,7 @@ console.log(this.fireHydrantId)
   dismissDetailsModal() {
     //this.map.on('click', () => {}).clearAllEventListeners();
     this.map.off('click');
+    this.map.closePopup();
     this.isAddNewLocationActive = !this.isAddNewLocationActive;
     this.modalService.dismissAll();
   }
@@ -604,7 +608,7 @@ console.log(this.fireHydrantId)
     this.fireHydrantLng = 0;
     this.fireHydrantAddress = '';
     this.fireHydrantState = '';
-    this.fireHydrantState = '';
+    this.fireHydrantStateDescription = '';
     this.fireHydrantType = '';
 
     //this.eventL = 0;
