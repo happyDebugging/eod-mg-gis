@@ -122,7 +122,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     this.GetFireHydrantsPOI();
 
-    this.GetRealTimeUserLocation();
+    //this.GetRealTimeUserLocation();
 
     //this.AddNewFireHydrantPOI();
 
@@ -154,6 +154,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
 
+    this.GetRealTimeUserLocation();
+    
     // Get device orientation
     window.addEventListener("deviceorientation", handleOrientation, true);
     function handleOrientation(event: any) {
@@ -236,21 +238,24 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       // Navigating from current position to nearest fire hydrant point
       this.routingControl = L.Routing.control({
-        router: L.Routing.osrmv1({
-          serviceUrl: `http://router.project-osrm.org/route/v1`
-        }),
-        // waypoints: [
-        //   L.latLng(0, 0),
-        //   L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
-        // ],
-        routeWhileDragging: true
-      }).on('routesfound', (waypoints) => {
-        console.log(waypoints);
+        // router: L.Routing.osrmv1({
+        //   serviceUrl: `http://router.project-osrm.org/route/v1`
+        // }),
+        waypoints: [
+          L.latLng(0, 0),
+          L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
+        ]
+        //,
+        //routeWhileDragging: true
+      })
+      // .on('routesfound', (waypoints) => {
+      //   console.log(waypoints);
 
-        // this.marker = L.marker(latlng);
-        // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
+      //   // this.marker = L.marker(latlng);
+      //   // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
 
-      }).addTo(this.map);
+      // })
+      .addTo(this.map);
       this.routingControl.hide();  // Hides the directions panel
     }
 
