@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, HostListener, } from '@angular/core';
 import { Route } from '@angular/router';
 import * as L from 'leaflet';
-import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import 'leaflet-routing-machine';
 //import { HttpClient } from '@angular/common/http';
 // Import the functions you need from the SDKs you need
