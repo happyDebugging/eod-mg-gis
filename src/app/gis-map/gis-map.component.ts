@@ -28,7 +28,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   isNavigationOn = false;
   isUserLogedIn = false;
   //latlng!: L.LatLng = (0,0);
-  routingControl!: L.Routing.Control;
+  //routingControl!: L.Routing.Control;
   distance = 0;
   minDistance = 10;
   closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', StateDescription: '', HoseDiameter: '' };
@@ -232,12 +232,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true, enableHighAccuracy: true }); //.on('');
 
-      if (this.routingControl) {
-        this.map.removeControl(this.routingControl);
-      }
+      // if (this.routingControl) {
+      //   this.map.removeControl(this.routingControl);
+      // }
 
       // Navigating from current position to nearest fire hydrant point
-      this.routingControl = L.Routing.control({
+      //this.routingControl = 
+      L.Routing.control({
         // router: L.Routing.osrmv1({
         //   serviceUrl: `http://router.project-osrm.org/route/v1`
         // }),
@@ -256,7 +257,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       // })
       .addTo(this.map);
-      this.routingControl.hide();  // Hides the directions panel
+      //this.routingControl.hide();  // Hides the directions panel
     }
 
 
@@ -310,7 +311,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       // Update navigation route
       if (this.isNavigationOn) {
         //var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
-        this.routingControl.setWaypoints([
+        //this.routingControl
+        L.Routing.control().setWaypoints([
           L.latLng(latlng.lat, latlng.lng),
           L.latLng(this.nearestMArker.Lat, this.nearestMArker.Lng)
         ]);
@@ -332,7 +334,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     } else {
       this.isNavigationOn = false;
       this.map.stopLocate();
-      this.map.removeControl(this.routingControl);
+      //this.map.removeControl(this.routingControl);
     }
 
   }
