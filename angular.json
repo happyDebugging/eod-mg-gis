@@ -44,15 +44,19 @@
           },
           "configurations": {
             "production": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
+              "budgets": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "6MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kB",
+                  "maximumError": "4kB"
                 }
-              ]
+              ],
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
@@ -66,13 +70,13 @@
               ]
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "eod-mg-gis:build:development"
+              "buildTarget": "eod-mg-gis:build:production"
             },
             "development": {
               "buildTarget": "eod-mg-gis:build:development"
