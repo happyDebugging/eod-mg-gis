@@ -76,7 +76,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "eod-mg-gis:build:production"
+              "buildTarget": "eod-mg-gis:build:development"
             },
             "development": {
               "buildTarget": "eod-mg-gis:build:development"
