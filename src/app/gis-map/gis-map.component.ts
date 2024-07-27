@@ -28,7 +28,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   isNavigationOn = false;
   isUserLogedIn = false;
   //latlng!: L.LatLng = (0,0);
-  //routingControl!: L.Routing.Control;
+  routingControl!: L.Routing.Control;
   distance = 0;
   minDistance = 10;
   closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', StateDescription: '', HoseDiameter: '' };
@@ -122,7 +122,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     this.GetFireHydrantsPOI();
 
-    //this.GetRealTimeUserLocation();
+    this.GetRealTimeUserLocation();
 
     //this.AddNewFireHydrantPOI();
 
@@ -154,8 +154,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
 
-    this.GetRealTimeUserLocation();
-    
     // Get device orientation
     window.addEventListener("deviceorientation", handleOrientation, true);
     function handleOrientation(event: any) {
@@ -232,22 +230,20 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true, enableHighAccuracy: true }); //.on('');
 
-      // if (this.routingControl) {
-      //   this.map.removeControl(this.routingControl);
-      // }
+      if (this.routingControl) {
+        this.map.removeControl(this.routingControl);
+      }
 
       // Navigating from current position to nearest fire hydrant point
-      //this.routingControl = 
-      L.Routing.control({
+      this.routingControl = L.Routing.control({
         // router: L.Routing.osrmv1({
         //   serviceUrl: `http://router.project-osrm.org/route/v1`
         // }),
-        waypoints: [
-          L.latLng(0, 0),
-          L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
-        ]
-        //,
-        //routeWhileDragging: true
+        // waypoints: [
+        //   L.latLng(0, 0),
+        //   L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
+        // ],
+        routeWhileDragging: true
       })
       // .on('routesfound', (waypoints) => {
       //   console.log(waypoints);
@@ -257,7 +253,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       // })
       .addTo(this.map);
-      //this.routingControl.hide();  // Hides the directions panel
+      this.routingControl.hide();  // Hides the directions panel
     }
 
 
@@ -311,8 +307,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       // Update navigation route
       if (this.isNavigationOn) {
         //var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
-        //this.routingControl
-        L.Routing.control().setWaypoints([
+        this.routingControl.setWaypoints([
           L.latLng(latlng.lat, latlng.lng),
           L.latLng(this.nearestMArker.Lat, this.nearestMArker.Lng)
         ]);
@@ -334,7 +329,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     } else {
       this.isNavigationOn = false;
       this.map.stopLocate();
-      //this.map.removeControl(this.routingControl);
+      this.map.removeControl(this.routingControl);
     }
 
   }
