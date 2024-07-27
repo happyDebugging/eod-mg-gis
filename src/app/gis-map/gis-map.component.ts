@@ -230,9 +230,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true, enableHighAccuracy: true }); //.on('');
 
-      if (this.routingControl) {
-        this.map.removeControl(this.routingControl);
-      }
+      // if (this.routingControl) {
+      //   this.map.removeControl(this.routingControl);
+      // }
 
       // Navigating from current position to nearest fire hydrant point
       this.routingControl = L.Routing.control({
