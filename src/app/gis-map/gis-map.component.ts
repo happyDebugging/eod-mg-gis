@@ -221,14 +221,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     // Locate user
     if (!this.isNavigationOn) {
-      const userLocation = this.map.locate({ setView: true, maxZoom: 16 }); //setView: true, , watch: true
+      const userLocation = this.map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true }); //setView: true, , watch: true
       //this.setView = false;
       console.log('1')
     } else {
       this.map.stopLocate();
       console.log('2')
 
-      const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true });
+      const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true, enableHighAccuracy: true }); //.on('');
 
       if (this.routingControl) {
         this.map.removeControl(this.routingControl);
@@ -280,7 +280,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         })
         .addTo(this.map);
 
-      //map.panTo(latlng);
+      //this.map.panTo(latlng);
 
       //var featureGroup = L.featureGroup([this.marker,this.circle]).addTo(map);
 
@@ -304,7 +304,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       // Update navigation route
       if (this.isNavigationOn) {
-        var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
+        //var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
         this.routingControl.setWaypoints([
           L.latLng(latlng.lat, latlng.lng),
           L.latLng(this.nearestMArker.Lat, this.nearestMArker.Lng)
