@@ -42,6 +42,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   fireHydrantLng = 0;
   isAddNewLocationActive = false;
   eventL!: L.LeafletMouseEvent;
+  zoomLevel = 19;
 
   @ViewChild('details') details: any;
   @ViewChild('detailsToPost') detailsToPost: any;
@@ -225,12 +226,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       console.log('1')
     } else {
       this.map.stopLocate();
-      const userLocation = this.map.locate({ setView: false, maxZoom: 10, watch: true });
       console.log('2')
-    }
 
-    if (this.isNavigationOn) {
-      const userLocation = this.map.locate({ setView: true, maxZoom: 16, watch: true });
+      const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true });
 
       if (this.routingControl) {
         this.map.removeControl(this.routingControl);
@@ -241,10 +239,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         router: L.Routing.osrmv1({
           serviceUrl: `http://router.project-osrm.org/route/v1`
         }),
-        waypoints: [
-          L.latLng(0, 0),
-          L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
-        ],
+        // waypoints: [
+        //   L.latLng(0, 0),
+        //   L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
+        // ],
         routeWhileDragging: true
       }).on('routesfound', (waypoints) => {
         console.log(waypoints);
