@@ -122,7 +122,44 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     this.GetFireHydrantsPOI();
 
-    this.GetRealTimeUserLocation();
+    // //////
+    // const options = {
+    //   enableHighAccuracy: true,
+    //   // Get high accuracy reading, if available (default false)
+    //   timeout: 5000,
+    //   // Time to return a position successfully before error (default infinity)
+    //   maximumAge: 2000,
+    //   // Milliseconds for which it is acceptable to use cached position (default 0)
+    // };
+    // navigator.geolocation.watchPosition(
+    //   (pos) => {
+    //     const lat = pos.coords.latitude;
+    //     const lng = pos.coords.longitude;
+    //     const accuracy = pos.coords.accuracy; // Accuracy in metres
+    //     this.marker = L.marker([lat,lng]).addTo(this.map);
+    //     this.circle = L.circle([lat,lng],
+    //       {
+    //         radius: 28, //radius: accuracy
+    //         color: '#2940a6',
+    //         fillColor: '#2940a6',
+    //         fillOpacity: 0.7
+    //       })
+    //       .addTo(this.map);
+    //       console.log('lala')
+    //   },
+    //   (err) => {
+    //     if (err.code === 1) {
+    //       alert("Please allow geolocation access");
+    //       // Runs if user refuses access
+    //     } else {
+    //       //alert("Cannot get current location");
+    //       // Runs if there was a technical problem.
+    //     }
+    //   }, options);
+    // ////////
+
+
+    this.GetRealTimeUserLocation(); //uncomment
 
     //this.AddNewFireHydrantPOI();
 
@@ -211,7 +248,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
               this.FillDetailsForUpdate(marker);
             });
         });
-      
+
     }
     const editPointButton = L.DomUtil.get('button-submit');
   }
@@ -245,14 +282,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         // ],
         routeWhileDragging: true
       })
-      // .on('routesfound', (waypoints) => {
-      //   console.log(waypoints);
+        // .on('routesfound', (waypoints) => {
+        //   console.log(waypoints);
 
-      //   // this.marker = L.marker(latlng);
-      //   // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
+        //   // this.marker = L.marker(latlng);
+        //   // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
 
-      // })
-      .addTo(this.map);
+        // })
+        .addTo(this.map);
       this.routingControl.hide();  // Hides the directions panel
     }
 
@@ -403,6 +440,48 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       );
   }
 
+  GetAddressDetails() {
+    this.getPOI = this.dbFunctionService.getAddressDetails(this.fireHydrantLat, this.fireHydrantLng)
+      .pipe(map((response: any) => {
+        
+        const geocodingResult = response.features[0].properties.geocoding;
+
+        const addressName = geocodingResult.name;
+        const addressStreet = geocodingResult.street;
+        const addressHousenumber = geocodingResult.housenumber;
+        const addressLocality = geocodingResult.locality;
+
+        console.log(addressName)
+
+        let fullAddress = '';
+        if (addressStreet != null) {
+          fullAddress = fullAddress + addressStreet;
+        } 
+        if (addressHousenumber != null) {
+          fullAddress = fullAddress +', '+ addressHousenumber;
+          console.log('pp')
+        } 
+        if (addressLocality != null) {
+          fullAddress = fullAddress +', '+ addressLocality;
+        }
+        console.log(fullAddress)
+
+      }))
+      .subscribe(
+        (res: any) => {
+          if ((res != null) || (res != undefined)) {
+            //console.log(res)
+            
+          }
+          //this.isLoadingResults = false;
+        },
+        err => {
+          //console.log(err);
+          //this.isLoadingResults = false;
+        }
+      );
+  }
+
   SaveFireHydrantsPOIs() {
 
     for (const m of this.fireHydrantMarkers) {
@@ -488,6 +567,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             this.fireHydrantLat = event.latlng.lat;
             this.fireHydrantLng = event.latlng.lng;
 
+            this.GetAddressDetails();
+
             this.FillDetailsBeforeNewPost();
 
             resolve(this.fireHydrantLng);
@@ -567,7 +648,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(updatedMarker)
       .pipe(map((response: any) => {
-        
+
         this.GetFireHydrantsPOI();
 
       }))
