@@ -24,6 +24,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   map!: L.Map;
   marker!: L.Marker<any>;
   circle!: L.CircleMarker<any>;
+  outerCircle!: L.CircleMarker<any>;
   setView = true;
   isNavigationOn = false;
   isUserLogedIn = false;
@@ -312,10 +313,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       if (this.circle) {
         this.map.removeLayer(this.circle);
+        this.map.removeLayer(this.outerCircle);
       }
 
       this.marker = L.marker(latlng, {icon: this.userLocationIcon});//.addTo(this.map);
-      this.circle = L.circleMarker(latlng,
+      this.outerCircle = L.circleMarker(latlng,
         {
           radius: 14, //radius: accuracy
           color: '#a9c4f5',
