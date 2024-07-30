@@ -99,6 +99,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     iconSize: [45, 45]
   });
 
+  userLocationIcon = L.icon({
+    iconUrl: 'user-location-marker-icon.png',
+    iconSize: [45, 45]
+  });
+
   // @ViewChild('currentLocationButton') public searchElementRef: ElementRef;
 
   constructor(private dbFunctionService: DbFunctionService, private modalService: NgbModal, private elementRef: ElementRef) { }
@@ -258,7 +263,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     // Locate user
     if (!this.isNavigationOn) {
-      const userLocation = this.map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true }); //setView: true, , watch: true
+      const userLocation = this.map.locate({ setView: true, maxZoom: 18, enableHighAccuracy: true }); //setView: true, , watch: true
       //this.setView = false;
       console.log('1')
     } else {
@@ -309,15 +314,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.map.removeLayer(this.circle);
       }
 
-      this.marker = L.marker(latlng);
+      this.marker = L.marker(latlng, {icon: this.userLocationIcon}).addTo(this.map);
       this.circle = L.circle(latlng,
         {
-          radius: 28, //radius: accuracy
+          radius: 10, //radius: accuracy
           color: '#2940a6',
           fillColor: '#2940a6',
           fillOpacity: 0.7
-        })
-        .addTo(this.map);
+        });//.addTo(this.map);
 
       //this.map.panTo(latlng);
 
