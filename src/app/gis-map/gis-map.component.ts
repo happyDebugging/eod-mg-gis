@@ -23,7 +23,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   map!: L.Map;
   marker!: L.Marker<any>;
-  circle!: L.Circle<any>;
+  circle!: L.CircleMarker<any>;
   setView = true;
   isNavigationOn = false;
   isUserLogedIn = false;
@@ -314,14 +314,21 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.map.removeLayer(this.circle);
       }
 
-      this.marker = L.marker(latlng, {icon: this.userLocationIcon}).addTo(this.map);
-      this.circle = L.circle(latlng,
+      this.marker = L.marker(latlng, {icon: this.userLocationIcon});//.addTo(this.map);
+      this.circle = L.circleMarker(latlng,
         {
-          radius: 10, //radius: accuracy
-          color: '#2940a6',
-          fillColor: '#2940a6',
-          fillOpacity: 0.7
-        });//.addTo(this.map);
+          radius: 14, //radius: accuracy
+          color: '#a9c4f5',
+          fillColor: '#ffffff',
+          fillOpacity: 0.9,
+        }).addTo(this.map);
+        this.circle = L.circleMarker(latlng,
+          {
+            radius: 9, //radius: accuracy
+            color: '#2940a6',
+            fillColor: '#2940a6',
+            fillOpacity: 1
+          }).addTo(this.map);
 
       //this.map.panTo(latlng);
 
