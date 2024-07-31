@@ -265,7 +265,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     if (this.userLocationLat != 0 && this.userLocationLng != 0 && this.isNavigationOn) {
       this.map.flyTo([this.userLocationLat,this.userLocationLng], 18);
     }
-    this.GetRealTimeUserLocation();
+    if (!this.isNavigationOn) {
+      this.GetRealTimeUserLocation();
+    }
   }
 
   GetRealTimeUserLocation() {
@@ -578,8 +580,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   PlaceNewPOIOnMap() {
     let promise = new Promise(async (resolve, reject) => {
 
-      this.map.on('click', () => {
-        this.map.on('click', (event) => {
+      //this.map.on('click', () => {
+        await this.map.on('click', (event) => {
 
           this.ResetFireHydrantDetails();
 
@@ -598,7 +600,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             resolve(this.fireHydrantLng);
           }
         })
-      });
+      //})
+      ;
 
     });
     return promise;
