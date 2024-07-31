@@ -45,6 +45,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   eventL!: L.LeafletMouseEvent;
   zoomLevel = 19;
 
+  userLocationLat = 0;
+  userLocationLng = 0;
+
   @ViewChild('details') details: any;
   @ViewChild('detailsToPost') detailsToPost: any;
 
@@ -259,8 +262,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   }
 
   GetUserLocation() {
-    this.map.stopLocate();
-    const userLocation = this.map.locate({ setView: true, maxZoom: 18, enableHighAccuracy: true }); //setView: true, , watch: true
+    if (this.userLocationLat != 0 && this.userLocationLng != 0) {
+      this.map.flyTo([this.userLocationLat,this.userLocationLng], 18);
+    }
     this.GetRealTimeUserLocation();
   }
 
@@ -310,6 +314,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       var latlng = position.latlng;
       var accuracy = position.accuracy;
+
+      this.userLocationLat = latlng.lat;
+      this.userLocationLng = latlng.lng;
 
       if (this.marker) {
         this.map.removeLayer(this.marker);
