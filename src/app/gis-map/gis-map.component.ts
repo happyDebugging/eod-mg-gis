@@ -568,20 +568,20 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     if (this.isAddNewLocationActive) {
 
-      this.PlaceNewPOIOnMap()
-        .then((res) => {
-          //this.FillDetailsBeforeNewPost();
-        },
-          () => console.log('failure')
-        );
+      this.PlaceNewPOIOnMap();
+        // .then((res) => {
+        //   //this.FillDetailsBeforeNewPost();
+        // },
+        //   () => console.log('failure')
+        // );
     }
   }
 
-  PlaceNewPOIOnMap() {
-    let promise = new Promise(async (resolve, reject) => {
+  async PlaceNewPOIOnMap() {
+    //let promise = new Promise(async (resolve, reject) => {
 
-      //this.map.on('click', () => {
-        await this.map.on('click', (event) => {
+      this.map.on('click', () => {
+        this.map.on('click', (event) => {
 
           this.ResetFireHydrantDetails();
 
@@ -597,14 +597,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
             this.FillDetailsBeforeNewPost();
 
-            resolve(this.fireHydrantLng);
+            //resolve(this.fireHydrantLng);
           }
         })
-      //})
+      })
       ;
 
-    });
-    return promise;
+    //});
+    //return promise;
   }
 
   FillDetailsBeforeNewPost() {
@@ -648,6 +648,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           if ((res != null) || (res != undefined)) {
             this.ResetFireHydrantDetails();
             this.GetFireHydrantsPOI();
+            this.isAddNewLocationActive = false;
           }
         },
         err => {
