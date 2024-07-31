@@ -703,25 +703,28 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   }
 
   GetNavigationWaypoints() {
-    this.getPOI = this.dbFunctionService.getNavigationWaypoints() //user location, nearest fire hydrant
-    .pipe(map((response: any) => {
-      
-      console.log(response)
 
-    }))
-    .subscribe(
-      (res: any) => {
-        if ((res != null) || (res != undefined)) {
-          //console.log(res)
+    //uncomment
+    // this.getPOI = this.dbFunctionService.getNavigationWaypoints() //user location, nearest fire hydrant
+    // .pipe(map((response: any) => {
+      
+    //   console.log(response)
+
+    // }))
+    // .subscribe(
+    //   (res: any) => {
+    //     if ((res != null) || (res != undefined)) {
+    //       //console.log(res)
           
-        }
-        //this.isLoadingResults = false;
-      },
-      err => {
-        //console.log(err);
-        //this.isLoadingResults = false;
-      }
-    );
+    //     }
+    //     //this.isLoadingResults = false;
+    //   },
+    //   err => {
+    //     //console.log(err);
+    //     //this.isLoadingResults = false;
+    //   }
+    // );
+
   }
 
 
