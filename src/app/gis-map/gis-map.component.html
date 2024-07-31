@@ -166,6 +166,10 @@
           <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999z" />
         </svg></button>
 
+        <div *ngIf="isAddNewLocationActive" id="addMarkerAlert" class="alert alert-primary" role="alert">
+          Πατήστε στο χάρτη για προσθήκη σημείου.
+        </div>
+
       <button *ngIf="!isUserLogedIn" type="button" id="loginButton" class="btn btn-Light" (click)="UserLogin()"><svg
           xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-right"
           viewBox="0 0 16 16">

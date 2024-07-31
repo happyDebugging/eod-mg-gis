@@ -581,8 +581,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     //let promise = new Promise(async (resolve, reject) => {
 
       this.map.on('click', () => {
-        this.map.on('click', (event) => {
 
+        this.map.on('click', (event) => {
+          
+          this.modalService.dismissAll();
+          
           this.ResetFireHydrantDetails();
 
           if (this.isAddNewLocationActive) {

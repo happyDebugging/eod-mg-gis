@@ -60,3 +60,12 @@
 .zindex {
   z-index: 99000 !important;
 }
+
+#addMarkerAlert {
+  position: absolute;
+  width: 65%;
+  left: 17.5%;
+  bottom: 5%;
+  text-align: center;
+  z-index: 1000;
+}
