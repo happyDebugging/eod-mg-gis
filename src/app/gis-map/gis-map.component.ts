@@ -262,7 +262,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   }
 
   GetUserLocation() {
-    if (this.userLocationLat != 0 && this.userLocationLng != 0) {
+    if (this.userLocationLat != 0 && this.userLocationLng != 0 && this.isNavigationOn) {
       this.map.flyTo([this.userLocationLat,this.userLocationLng], 18);
     }
     this.GetRealTimeUserLocation();
