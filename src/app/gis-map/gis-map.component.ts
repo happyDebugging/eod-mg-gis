@@ -164,7 +164,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     //   }, options);
     // ////////
 
-
     this.GetRealTimeUserLocation(); //uncomment
 
     //this.AddNewFireHydrantPOI();
@@ -259,6 +258,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     const editPointButton = L.DomUtil.get('button-submit');
   }
 
+  GetUserLocation() {
+    this.map.stopLocate();
+    const userLocation = this.map.locate({ setView: true, maxZoom: 18, enableHighAccuracy: true }); //setView: true, , watch: true
+    this.GetRealTimeUserLocation();
+  }
 
   GetRealTimeUserLocation() {
 

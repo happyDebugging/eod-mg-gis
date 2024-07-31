@@ -41,6 +41,14 @@ export class DbFunctionService {
         return this.http.get<FireHydrantPoi>(environment.reverseGeocodeURL + environment.reverseGeocodeLat + Lat + environment.reverseGeocodeLng + Lng + environment.reverseGeocodeOptions);
     }
 
+    getNavigation(Lat: number, Lng: number) {
+        let options: any = {
+            headers: {"Access-Control-Allow-Origin": "*"},  
+            observe: 'response'
+        }
+        return this.http.get<FireHydrantPoi>(environment.reverseGeocodeURL + environment.reverseGeocodeLat + Lat + environment.reverseGeocodeLng + Lng + environment.reverseGeocodeOptions);
+    }
+
 
 }
 
