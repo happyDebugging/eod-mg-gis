@@ -413,9 +413,11 @@ console.log('onlocate')
 
 
   FindNearestPoint(latlng: L.LatLng) {
-console.log('near')
+
+    this.minDistance = 10;
+    
     for (const marker of this.fireHydrantMarkers) {
-      console.log('nearest')
+      
       this.distance = Math.abs(marker.Lat - latlng.lat) + Math.abs(marker.Lng - latlng.lng);
       //console.log('this.distance: '+this.distance)
 
@@ -426,7 +428,7 @@ console.log('near')
     }
 
     this.nearestMarker = this.closestPoint;
-    //console.log('nearestMarker: ' + this.nearestMarker.Address)
+    console.log('nearestMarker: ' + this.nearestMarker.Address)
     //L.marker([this.nearestMarker.Lat, this.nearestMarker.Long]);
 
 
