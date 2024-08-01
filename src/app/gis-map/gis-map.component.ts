@@ -33,7 +33,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   distance = 0;
   minDistance = 10;
   closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', StateDescription: '', HoseDiameter: '' };
-  nearestMArker!: FireHydrantPoi;
+  nearestMarker!: FireHydrantPoi;
   fireHydrantId = '';
   fireHydrantAddress = '';
   fireHydrantState = '';
@@ -49,6 +49,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   userLocationLng = 0;
 
   navigationWayPoints: Array<any> = [];
+  navigationPolyline: any;
 
   @ViewChild('details') details: any;
   @ViewChild('detailsToPost') detailsToPost: any;
@@ -132,10 +133,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     // this.SaveFireHydrantsPOIs();
 
     this.GetFireHydrantsPOI();
-
-    //////
-    this.GetNavigationWaypoints();
-    ////
 
     // //////
     // const options = {
@@ -269,7 +266,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   GetUserLocation() {
     if (this.userLocationLat != 0 && this.userLocationLng != 0 && this.isNavigationOn) {
-      this.map.flyTo([this.userLocationLat,this.userLocationLng], 18);
+      this.map.flyTo([this.userLocationLat, this.userLocationLng], 18);
     }
     if (!this.isNavigationOn) {
       this.GetRealTimeUserLocation();
@@ -289,30 +286,32 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true, enableHighAccuracy: true }); //.on('');
 
-      if (this.routingControl) {
-        this.map.removeControl(this.routingControl);
+      if (this.navigationPolyline) {
+        //this.map.removeControl(this.routingControl);
+        this.navigationPolyline.removeFrom(this.map);
       }
 
       // Navigating from current position to nearest fire hydrant point
-      this.routingControl = L.Routing.control({
-        // router: L.Routing.osrmv1({
-        //   serviceUrl: `http://router.project-osrm.org/route/v1`
-        // }),
-        // waypoints: [
-        //   L.latLng(0, 0),
-        //   L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
-        // ],
-        routeWhileDragging: true
-      })
-        // .on('routesfound', (waypoints) => {
-        //   console.log(waypoints);
+      // this.routingControl = L.Routing.control({
+      //   // router: L.Routing.osrmv1({
+      //   //   serviceUrl: `http://router.project-osrm.org/route/v1`
+      //   // }),
+      //   // waypoints: [
+      //   //   L.latLng(0, 0),
+      //   //   L.latLng(39.364914, 22.953848)  // Nearest fire hydrant
+      //   // ],
+      //   routeWhileDragging: true
+      // })
+      //   // .on('routesfound', (waypoints) => {
+      //   //   console.log(waypoints);
 
-        //   // this.marker = L.marker(latlng);
-        //   // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
+      //   //   // this.marker = L.marker(latlng);
+      //   //   // this.circle = L.circle(latlng, {radius: accuracy, color: '#2940a6', fillColor: '#2940a6', fillOpacity: 0.7}).addTo(this.map);
 
-        // })
-        .addTo(this.map);
-      this.routingControl.hide();  // Hides the directions panel
+      //   // })
+      //   .addTo(this.map);
+      // this.routingControl.hide();  // Hides the directions panel
+
     }
 
 
@@ -335,7 +334,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.map.removeLayer(this.outerCircle);
       }
 
-      this.marker = L.marker(latlng, {icon: this.userLocationIcon});//.addTo(this.map);
+      this.marker = L.marker(latlng, { icon: this.userLocationIcon });//.addTo(this.map);
       this.outerCircle = L.circleMarker(latlng,
         {
           radius: 14, //radius: accuracy
@@ -343,13 +342,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           fillColor: '#ffffff',
           fillOpacity: 0.9,
         }).addTo(this.map);
-        this.circle = L.circleMarker(latlng,
-          {
-            radius: 9, //radius: accuracy
-            color: '#2940a6',
-            fillColor: '#2940a6',
-            fillOpacity: 1
-          }).addTo(this.map);
+      this.circle = L.circleMarker(latlng,
+        {
+          radius: 9, //radius: accuracy
+          color: '#2940a6',
+          fillColor: '#2940a6',
+          fillOpacity: 1
+        }).addTo(this.map);
 
       //this.map.panTo(latlng);
 
@@ -373,15 +372,18 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       this.FindNearestPoint(latlng);
 
 
-      // Update navigation route
+      // // Update navigation route
+      // if (this.isNavigationOn) {
+      //   //var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
+      //   this.routingControl.setWaypoints([
+      //     L.latLng(latlng.lat, latlng.lng),
+      //     L.latLng(this.nearestMarker.Lat, this.nearestMarker.Lng)
+      //   ]);
+      // }
+
       if (this.isNavigationOn) {
-        //var newWaypoint = this.routingControl.getWaypoints()[0].latLng;
-        this.routingControl.setWaypoints([
-          L.latLng(latlng.lat, latlng.lng),
-          L.latLng(this.nearestMArker.Lat, this.nearestMArker.Lng)
-        ]);
-
-
+        // Fetch navigation route
+        this.GetNavigationWaypoints(latlng.lat, latlng.lng);
       }
 
 
@@ -398,7 +400,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     } else {
       this.isNavigationOn = false;
       this.map.stopLocate();
-      this.map.removeControl(this.routingControl);
+      //this.map.removeControl(this.routingControl);
+      this.navigationPolyline.removeFrom(this.map);
     }
 
   }
@@ -417,9 +420,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       }
     }
 
-    this.nearestMArker = this.closestPoint;
-    //console.log('nearestMArker: ' + this.nearestMArker.Address)
-    //L.marker([this.nearestMArker.Lat, this.nearestMArker.Long]);
+    this.nearestMarker = this.closestPoint;
+    //console.log('nearestMarker: ' + this.nearestMarker.Address)
+    //L.marker([this.nearestMarker.Lat, this.nearestMarker.Long]);
 
 
   }
@@ -475,7 +478,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   GetAddressDetails() {
     this.getPOI = this.dbFunctionService.getAddressDetails(this.fireHydrantLat, this.fireHydrantLng)
       .pipe(map((response: any) => {
-        
+
         const geocodingResult = response.features[0].properties.geocoding;
 
         const addressName = geocodingResult.name;
@@ -486,12 +489,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         let fullAddress = '';
         if (addressStreet != null) {
           fullAddress = fullAddress + addressStreet;
-        } 
+        }
         if (addressHousenumber != null) {
-          fullAddress = fullAddress +', '+ addressHousenumber;
-        } 
+          fullAddress = fullAddress + ', ' + addressHousenumber;
+        }
         if (addressLocality != null) {
-          fullAddress = fullAddress +', '+ addressLocality;
+          fullAddress = fullAddress + ', ' + addressLocality;
         }
         console.log(fullAddress)
 
@@ -500,7 +503,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         (res: any) => {
           if ((res != null) || (res != undefined)) {
             //console.log(res)
-            
+
           }
           //this.isLoadingResults = false;
         },
@@ -572,40 +575,40 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     if (this.isAddNewLocationActive) {
 
       this.PlaceNewPOIOnMap();
-        // .then((res) => {
-        //   //this.FillDetailsBeforeNewPost();
-        // },
-        //   () => console.log('failure')
-        // );
+      // .then((res) => {
+      //   //this.FillDetailsBeforeNewPost();
+      // },
+      //   () => console.log('failure')
+      // );
     }
   }
 
   async PlaceNewPOIOnMap() {
     //let promise = new Promise(async (resolve, reject) => {
 
-      //this.map.on('click', () => {  //evgala ta buttons apo to map kai de xreiazetai pleon
+    //this.map.on('click', () => {  //evgala ta buttons apo to map kai de xreiazetai pleon
 
-        this.map.on('click', (event) => {
-          
-          this.modalService.dismissAll();
+    this.map.on('click', (event) => {
 
-          this.ResetFireHydrantDetails();
+      this.modalService.dismissAll();
 
-          if (this.isAddNewLocationActive) {
-            console.log(event.latlng)
+      this.ResetFireHydrantDetails();
 
-            this.eventL = event;
+      if (this.isAddNewLocationActive) {
+        console.log(event.latlng)
 
-            this.fireHydrantLat = event.latlng.lat;
-            this.fireHydrantLng = event.latlng.lng;
+        this.eventL = event;
 
-            this.GetAddressDetails();
+        this.fireHydrantLat = event.latlng.lat;
+        this.fireHydrantLng = event.latlng.lng;
 
-            this.FillDetailsBeforeNewPost();
+        this.GetAddressDetails();
 
-            //resolve(this.fireHydrantLng);
-          }
-        })
+        this.FillDetailsBeforeNewPost();
+
+        //resolve(this.fireHydrantLng);
+      }
+    })
       //})
       ;
 
@@ -705,50 +708,52 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       );
   }
 
-  GetNavigationWaypoints() {
+  GetNavigationWaypoints(currentUserLat: number, currentUserLng: number) {
 
-    //uncomment
-    this.getPOI = this.dbFunctionService.getNavigationWaypoints() //user location, nearest fire hydrant
-    .pipe(map((response: any) => {
-      
-      this.navigationWayPoints= [];
+    this.getPOI = this.dbFunctionService.getNavigationWaypoints(currentUserLat, currentUserLng, this.nearestMarker.Lat, this.nearestMarker.Lng) //user location, nearest fire hydrant
+      .pipe(map((response: any) => {
 
-      //console.log(response.features[0].geometry.coordinates[0])
+        this.navigationWayPoints = [];
 
-      const navigationPOI = response.features[0].geometry.coordinates[0];
+        //console.log(response.features[0].geometry.coordinates[0])
 
-      let array = [];
+        const navigationPOI = response.features[0].geometry.coordinates[0];
 
-      for (const poi of navigationPOI) {
-        //console.log(poi[1], poi[0])
-        array = [poi[1], poi[0]];
-        this.navigationWayPoints.push(array);
-      }
+        let array = [];
 
-      //console.log(this.navigationWayPoints)
-
-      var navigationPolyline = new L.Polyline(this.navigationWayPoints, {
-        color: 'blue',
-        weight: 7,
-        opacity: 0.6,
-        smoothFactor: 1
-    });
-    navigationPolyline.addTo(this.map);
-
-    }))
-    .subscribe(
-      (res: any) => {
-        if ((res != null) || (res != undefined)) {
-          //console.log(res)
-          
+        for (const poi of navigationPOI) {
+          //console.log(poi[1], poi[0])
+          array = [poi[1], poi[0]];
+          this.navigationWayPoints.push(array);
         }
-        //this.isLoadingResults = false;
-      },
-      err => {
-        //console.log(err);
-        //this.isLoadingResults = false;
-      }
-    );
+
+        //console.log(this.navigationWayPoints)
+        
+        if (this.navigationPolyline) {
+          this.navigationPolyline.removeFrom(this.map);
+        }
+        
+        this.navigationPolyline = new L.Polyline(this.navigationWayPoints, {
+          color: 'blue',
+          weight: 7,
+          opacity: 0.6,
+          smoothFactor: 1
+        }).addTo(this.map);
+
+      }))
+      .subscribe(
+        (res: any) => {
+          if ((res != null) || (res != undefined)) {
+            //console.log(res)
+
+          }
+          //this.isLoadingResults = false;
+        },
+        err => {
+          //console.log(err);
+          //this.isLoadingResults = false;
+        }
+      );
 
   }
 
