@@ -384,6 +384,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       if (this.isNavigationOn) {
         // Fetch navigation route
         this.GetNavigationWaypoints(latlng.lat, latlng.lng);
+      } else {
+        this.navigationPolyline.removeFrom(this.map);
       }
 
 
