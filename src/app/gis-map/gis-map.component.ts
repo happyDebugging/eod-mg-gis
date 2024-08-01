@@ -396,14 +396,15 @@ console.log('onlocate')
 
   StartStopNavigation() {
 
+    this.map.removeEventListener('locationfound');
+    
     if (!this.isNavigationOn) {
       this.isNavigationOn = true;
-      this.map.on('locationfound', () => {}).clearAllEventListeners();
       this.GetRealTimeUserLocation();
     } else {
       this.isNavigationOn = false;
       this.map.stopLocate();
-      this.map.on('locationfound', () => {}).clearAllEventListeners();
+      //this.map.on('locationfound', () => {}).clearAllEventListeners();
       //this.map.removeControl(this.routingControl);
       this.navigationPolyline.removeFrom(this.map);
     }
