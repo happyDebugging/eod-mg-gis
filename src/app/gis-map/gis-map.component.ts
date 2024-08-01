@@ -48,6 +48,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   userLocationLat = 0;
   userLocationLng = 0;
 
+  navigationWayPoints: Array<any> = [];
+
   @ViewChild('details') details: any;
   @ViewChild('detailsToPost') detailsToPost: any;
 
@@ -130,6 +132,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     // this.SaveFireHydrantsPOIs();
 
     this.GetFireHydrantsPOI();
+
+    //////
+    this.GetNavigationWaypoints();
+    ////
 
     // //////
     // const options = {
@@ -432,7 +438,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
           }
         }
-        console.log(markerArray)
+        //console.log(markerArray)
         return markerArray.reverse();
       }))
       .subscribe(
@@ -477,15 +483,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         const addressHousenumber = geocodingResult.housenumber;
         const addressLocality = geocodingResult.locality;
 
-        console.log(addressName)
-
         let fullAddress = '';
         if (addressStreet != null) {
           fullAddress = fullAddress + addressStreet;
         } 
         if (addressHousenumber != null) {
           fullAddress = fullAddress +', '+ addressHousenumber;
-          console.log('pp')
         } 
         if (addressLocality != null) {
           fullAddress = fullAddress +', '+ addressLocality;
@@ -705,25 +708,47 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   GetNavigationWaypoints() {
 
     //uncomment
-    // this.getPOI = this.dbFunctionService.getNavigationWaypoints() //user location, nearest fire hydrant
-    // .pipe(map((response: any) => {
+    this.getPOI = this.dbFunctionService.getNavigationWaypoints() //user location, nearest fire hydrant
+    .pipe(map((response: any) => {
       
-    //   console.log(response)
+      this.navigationWayPoints= [];
 
-    // }))
-    // .subscribe(
-    //   (res: any) => {
-    //     if ((res != null) || (res != undefined)) {
-    //       //console.log(res)
+      //console.log(response.features[0].geometry.coordinates[0])
+
+      const navigationPOI = response.features[0].geometry.coordinates[0];
+
+      let array = [];
+
+      for (const poi of navigationPOI) {
+        //console.log(poi[1], poi[0])
+        array = [poi[1], poi[0]];
+        this.navigationWayPoints.push(array);
+      }
+
+      //console.log(this.navigationWayPoints)
+
+      var navigationPolyline = new L.Polyline(this.navigationWayPoints, {
+        color: 'blue',
+        weight: 7,
+        opacity: 0.6,
+        smoothFactor: 1
+    });
+    navigationPolyline.addTo(this.map);
+
+    }))
+    .subscribe(
+      (res: any) => {
+        if ((res != null) || (res != undefined)) {
+          //console.log(res)
           
-    //     }
-    //     //this.isLoadingResults = false;
-    //   },
-    //   err => {
-    //     //console.log(err);
-    //     //this.isLoadingResults = false;
-    //   }
-    // );
+        }
+        //this.isLoadingResults = false;
+      },
+      err => {
+        //console.log(err);
+        //this.isLoadingResults = false;
+      }
+    );
 
   }
 
