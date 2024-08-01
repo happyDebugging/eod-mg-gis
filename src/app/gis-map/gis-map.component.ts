@@ -318,7 +318,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
     this.map.on('locationfound', (position) => {
-
+console.log('onlocate')
       var latlng = position.latlng;
       var accuracy = position.accuracy;
 
@@ -398,12 +398,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     if (!this.isNavigationOn) {
       this.isNavigationOn = true;
+      this.map.on('locationfound', () => {}).clearAllEventListeners();
       this.GetRealTimeUserLocation();
     } else {
       this.isNavigationOn = false;
       this.map.stopLocate();
+      this.map.on('locationfound', () => {}).clearAllEventListeners();
       //this.map.removeControl(this.routingControl);
-      this.navigationPolyline.removeFrom(this.map);
       this.navigationPolyline.removeFrom(this.map);
     }
 
@@ -411,9 +412,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
 
   FindNearestPoint(latlng: L.LatLng) {
-
+console.log('near')
     for (const marker of this.fireHydrantMarkers) {
-
+      console.log('nearest')
       this.distance = Math.abs(marker.Lat - latlng.lat) + Math.abs(marker.Lng - latlng.lng);
       //console.log('this.distance: '+this.distance)
 
