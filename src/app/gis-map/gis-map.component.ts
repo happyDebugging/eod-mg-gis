@@ -404,6 +404,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       this.map.stopLocate();
       //this.map.removeControl(this.routingControl);
       this.navigationPolyline.removeFrom(this.map);
+      this.navigationPolyline.removeFrom(this.map);
     }
 
   }
