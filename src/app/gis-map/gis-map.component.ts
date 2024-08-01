@@ -580,7 +580,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   async PlaceNewPOIOnMap() {
     //let promise = new Promise(async (resolve, reject) => {
 
-      this.map.on('click', () => {
+      //this.map.on('click', () => {  //evgala ta buttons apo to map kai de xreiazetai pleon
 
         this.map.on('click', (event) => {
           
@@ -603,7 +603,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             //resolve(this.fireHydrantLng);
           }
         })
-      })
+      //})
       ;
 
     //});
