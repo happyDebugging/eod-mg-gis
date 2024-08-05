@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FireHydrantPoi } from '../models/fire-hydrant.model';
 import { environment } from '../../../environments/environment';
+import { FireHydrantPoi } from '../models/fire-hydrant.model';
 
 @Injectable()
 export class DbFunctionService {

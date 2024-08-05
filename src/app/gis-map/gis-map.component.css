@@ -48,14 +48,12 @@
   z-index: 1000;
 }
 
-
 .btn-Light {
   background-color: whitesmoke;
   border-width: 2px;
   border-color: rgb(179, 179, 179);
   border-radius: 3.5px;
 }
-
 
 .zindex {
   z-index: 99000 !important;
