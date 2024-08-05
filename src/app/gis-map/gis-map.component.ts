@@ -56,6 +56,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   newUserPasswordConfirmation = '';
   isPassword6Characters = true;
   isChangePasswordSuccessfull = false;
+  errorMessageToShow = '';
 
   @ViewChild('userLogin') userLogin: any;
   @ViewChild('userSignOut') userSignOut: any;
@@ -570,6 +571,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   AuthenticateUser() {
 
+    this.errorMessageToShow = '';
+
     signInWithEmailAndPassword(this.auth, this.userEmail.trim(), this.userPassword.trim())
       .then((userCredential) => {
         // Signed in 
@@ -596,7 +599,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         const errorCode = error.code;
         const errorMessage = error.message;
 
-        console.log(error.code, error.code)
+        console.log(error.code)
+
+        if (error.code = 'auth/invalid-credential') {
+          this.errorMessageToShow = 'Λάθος email ή κωδικός πρόσβασης.';
+        } 
+        if (error.code = 'auth/too-many-requests') {
+          this.errorMessageToShow = 'Υπέρβαση προσπαθειών σύνδεσης, προσπαθήστε αργότερα.';
+        }
 
         this.isUserLoggedIn = false;
         localStorage.clear();

@@ -14,7 +14,7 @@
         <input type="password" class="form-control" id="userPassword" name="userPassword" [(ngModel)]="userPassword">
       </div>
       <div class="mb-3">
-        <label *ngIf="isCredentialsWrong" class="text-danger">Λάθος email ή κωδικός πρόσβασης.</label>
+        <label *ngIf="isCredentialsWrong" class="text-danger">{{  errorMessageToShow }}</label>
       </div>
     </form>
   </div>
