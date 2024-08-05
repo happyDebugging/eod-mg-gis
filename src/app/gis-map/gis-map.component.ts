@@ -690,7 +690,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   dismissDetailsModal() {
     this.map.off('click');
     this.map.closePopup();
-    this.isAddNewLocationActive = !this.isAddNewLocationActive;
+    this.isAddNewLocationActive = false; //!this.isAddNewLocationActive;
     this.modalService.dismissAll();
   }
 
