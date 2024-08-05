@@ -6,7 +6,7 @@ import * as L from 'leaflet';
 
 import { initializeApp } from "firebase/app";
 import { getDatabase } from 'firebase/database';
-import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signOut, updatePassword } from "firebase/auth";
 
 import { FireHydrantPoi } from '../shared/models/fire-hydrant.model';
 import { DbFunctionService } from '../shared/services/db-functions.service';
@@ -52,10 +52,18 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   accessToken = '';
   isCredentialsWrong = false;
   loggedInUserId = '';
+  newUserPassword = '';
+  newUserPasswordConfirmation = '';
+  isPassword6Characters = true;
+  isChangePasswordSuccessfull = false;
 
   @ViewChild('userLogin') userLogin: any;
+  @ViewChild('userSignOut') userSignOut: any;
+  @ViewChild('manageUserAccount') manageUserAccount: any;
+  @ViewChild('updatePassword') updatePassword: any;
   @ViewChild('details') details: any;
   @ViewChild('detailsToPost') detailsToPost: any;
+  @ViewChild('changePasswordSuccessfullAlert') changePasswordSuccessfullAlert: any;
 
   getPOI: Subscription = new Subscription;
   updatePOI: Subscription = new Subscription;
@@ -86,6 +94,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   constructor(private dbFunctionService: DbFunctionService, private modalService: NgbModal, private elementRef: ElementRef) { }
 
   ngOnInit(): void {
+
+    this.isUserLogedIn = JSON.parse(JSON.stringify(localStorage.getItem("isUserLogedIn")));
 
     // Initialize Firebase
     const firebaseApp = initializeApp(this.firebaseConfig);
@@ -563,6 +573,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         const user = userCredential.user;
 
         this.isUserLogedIn = true;
+        localStorage.setItem("isUserLogedIn", "true");
+
         this.isCredentialsWrong = false;
 
         this.userEmail = '';
@@ -589,17 +601,61 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   }
 
+  UserSignOutConfirmation() {
+    this.modalService.dismissAll();
+    this.modalService.open(this.userSignOut, { centered: true, size: 'sm', windowClass: 'zindex' });
+  }
+
   UserSignOut() {
+    this.modalService.dismissAll();
 
     signOut(this.auth).then(() => {
       // Sign-out successful.
       this.isUserLogedIn = false;
 
       this.GetFireHydrantsPOI();
-      
+
     }).catch((error) => {
       // An error happened.
       console.log(error)
+    });
+  }
+
+  ManageUserAccount() {
+    this.modalService.dismissAll();
+
+    this.newUserPassword = '';
+    this.newUserPasswordConfirmation = '';
+
+    this.modalService.open(this.manageUserAccount, { centered: true, size: 'sm', windowClass: 'zindex' });
+  }
+
+  PrepareToUpdateUserPassword() {
+    this.modalService.dismissAll();
+    this.modalService.open(this.updatePassword, { centered: true, size: 'sm', windowClass: 'zindex' });
+  }
+
+  UpdateUserPassword() {
+
+    const user = this.auth.currentUser;
+
+    updatePassword(user, this.newUserPassword).then(() => {
+      // Update successful.
+      this.modalService.dismissAll();
+      this.isChangePasswordSuccessfull = true;
+
+      this.newUserPassword = '';
+      this.newUserPasswordConfirmation = '';
+      this.isPassword6Characters = true;
+
+      setTimeout(() => {
+        this.isChangePasswordSuccessfull = false;
+      }, 2000);
+
+    }).catch((error) => {
+      console.log(error)
+
+      this.isPassword6Characters = false;
     });
   }
 
@@ -607,6 +663,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.map.off('click');
     this.map.closePopup();
     this.modalService.dismissAll();
+
+    this.userEmail = '';
+    this.userPassword = '';
+    this.isCredentialsWrong = false;
   }
 
   dismissDetailsModal() {
