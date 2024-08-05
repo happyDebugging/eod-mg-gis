@@ -6,7 +6,7 @@ import * as L from 'leaflet';
 
 import { initializeApp } from "firebase/app";
 import { getDatabase } from 'firebase/database';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 import { FireHydrantPoi } from '../shared/models/fire-hydrant.model';
 import { DbFunctionService } from '../shared/services/db-functions.service';
@@ -133,17 +133,17 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       if (this.isUserLogedIn) {
         popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
-        `<div class="d-grid">
+          `<div class="d-grid">
           <button type="button" class="btn btn-secondary btn-sm edit"> 
             Edit
           </buton></div>
       `;
       } else {
         popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
-        `<div class="d-grid">
+          `<div class="d-grid">
       `;
       }
-      
+
       L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
         .addTo(map)
         .bindPopup(popupInfo)
@@ -552,20 +552,22 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
 
   UserLogin() {
-
     this.modalService.open(this.userLogin, { centered: true, size: 'sm', windowClass: 'zindex' });
-
   }
 
   AuthenticateUser() {
-    
+
     signInWithEmailAndPassword(this.auth, this.userEmail.trim(), this.userPassword.trim())
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-        
+
         this.isUserLogedIn = true;
         this.isCredentialsWrong = false;
+
+        this.userEmail = '';
+        this.userPassword = '';
+
         this.loggedInUserId = user.uid;
 
         //this.accessToken = user.accessToken;
@@ -585,6 +587,20 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.isCredentialsWrong = true;
       });
 
+  }
+
+  UserSignOut() {
+
+    signOut(this.auth).then(() => {
+      // Sign-out successful.
+      this.isUserLogedIn = false;
+
+      this.GetFireHydrantsPOI();
+      
+    }).catch((error) => {
+      // An error happened.
+      console.log(error)
+    });
   }
 
   dismissUserLoginModal() {
