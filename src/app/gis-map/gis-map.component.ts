@@ -24,7 +24,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   outerCircle!: L.CircleMarker<any>;
   setView = true;
   isNavigationOn = false;
-  isUserLogedIn = false;
+  isUserLoggedIn = false;
   distance = 0;
   minDistance = 10;
   closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', StateDescription: '', HoseDiameter: '', Responsible: '' };
@@ -95,7 +95,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
 
-    this.isUserLogedIn = JSON.parse(JSON.stringify(localStorage.getItem("isUserLogedIn")));
+    this.isUserLoggedIn = JSON.parse(JSON.stringify(localStorage.getItem("isUserLoggedIn")));
 
     // Initialize Firebase
     const firebaseApp = initializeApp(this.firebaseConfig);
@@ -141,7 +141,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       let popupInfo = '';
 
-      if (this.isUserLogedIn) {
+      if (this.isUserLoggedIn) {
         popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
           `<div class="d-grid">
           <button type="button" class="btn btn-secondary btn-sm edit"> 
@@ -575,8 +575,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         // Signed in 
         const user = userCredential.user;
 
-        this.isUserLogedIn = true;
-        localStorage.setItem("isUserLogedIn", "true");
+        this.isUserLoggedIn = true;
+        localStorage.setItem("isUserLoggedIn", "true");
 
         this.isCredentialsWrong = false;
 
@@ -598,7 +598,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
         console.log(error.code, error.code)
 
-        this.isUserLogedIn = false;
+        this.isUserLoggedIn = false;
+        localStorage.clear();
+
         this.isCredentialsWrong = true;
       });
 
@@ -614,7 +616,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     signOut(this.auth).then(() => {
       // Sign-out successful.
-      this.isUserLogedIn = false;
+      this.isUserLoggedIn = false;
+      localStorage.clear();
 
       this.GetFireHydrantsPOI();
 
