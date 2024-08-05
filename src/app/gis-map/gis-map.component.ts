@@ -487,8 +487,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   UpdateFireHydrantsPOI() {
 
-    //this.dismissDetailsModal();
-    this.modalService.dismissAll();
+    this.dismissDetailsModal();
 
     let updatedMarker = new FireHydrantPoi;
     updatedMarker.Id = this.fireHydrantId;
@@ -691,7 +690,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   dismissDetailsModal() {
     this.map.off('click');
     this.map.closePopup();
-    this.isAddNewLocationActive = !this.isAddNewLocationActive;
+    this.isAddNewLocationActive = false; //!this.isAddNewLocationActive;
     this.modalService.dismissAll();
   }
 
