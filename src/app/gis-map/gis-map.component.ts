@@ -318,7 +318,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     // Use map event 'locationfound' to perform some operations once the browser locates the user.
     this.map.on('locationfound', (position) => {
-console.log('onlocate')
+      console.log('onlocate')
       var latlng = position.latlng;
       var accuracy = position.accuracy;
 
@@ -397,7 +397,7 @@ console.log('onlocate')
   StartStopNavigation() {
 
     this.map.removeEventListener('locationfound');
-    
+
     if (!this.isNavigationOn) {
       this.isNavigationOn = true;
       this.GetRealTimeUserLocation();
@@ -415,9 +415,9 @@ console.log('onlocate')
   FindNearestPoint(latlng: L.LatLng) {
 
     this.minDistance = 10;
-    
+
     for (const marker of this.fireHydrantMarkers) {
-      
+
       this.distance = Math.abs(marker.Lat - latlng.lat) + Math.abs(marker.Lng - latlng.lng);
       //console.log('this.distance: '+this.distance)
 
@@ -722,30 +722,31 @@ console.log('onlocate')
 
         this.navigationWayPoints = [];
 
-        //console.log(response.features[0].geometry.coordinates[0])
+        const userLocationArray = [currentUserLat, currentUserLng];
+        this.navigationWayPoints.push(userLocationArray);
 
         const navigationPOI = response.features[0].geometry.coordinates[0];
 
         let array = [];
 
         for (const poi of navigationPOI) {
-          //console.log(poi[1], poi[0])
           array = [poi[1], poi[0]];
           this.navigationWayPoints.push(array);
         }
 
-        //console.log(this.navigationWayPoints)
-        
+        const nearestMarkerArray = [this.nearestMarker.Lat, this.nearestMarker.Lng];
+        this.navigationWayPoints.push(nearestMarkerArray);
+
         if (this.navigationPolyline) {
           this.navigationPolyline.removeFrom(this.map);
         }
-        
+
         this.navigationPolyline = new L.Polyline(this.navigationWayPoints, {
           color: 'blue',
           weight: 7,
           opacity: 0.6,
           smoothFactor: 1
-        }).addTo(this.map);
+        }).addTo(this.map).bringToBack();
 
       }))
       .subscribe(
