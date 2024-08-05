@@ -97,6 +97,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
 
     this.isUserLoggedIn = JSON.parse(JSON.stringify(localStorage.getItem("isUserLoggedIn")));
+    this.loggedInUserId = JSON.parse(JSON.stringify(localStorage.getItem("loggedInUserId")));
 
     // Initialize Firebase
     const firebaseApp = initializeApp(this.firebaseConfig);
@@ -587,6 +588,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.userPassword = '';
 
         this.loggedInUserId = user.uid;
+        localStorage.setItem("loggedInUserId", user.uid);
 
         //this.accessToken = user.accessToken;
 
