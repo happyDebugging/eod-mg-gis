@@ -3,8 +3,11 @@ import { Route } from '@angular/router';
 import { map, Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as L from 'leaflet';
+
 import { initializeApp } from "firebase/app";
 import { getDatabase } from 'firebase/database';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 import { FireHydrantPoi } from '../shared/models/fire-hydrant.model';
 import { DbFunctionService } from '../shared/services/db-functions.service';
 
@@ -43,6 +46,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   navigationWayPoints: Array<any> = [];
   navigationPolyline: any;
 
+  userEmail = '';
+  userPassword = '';
+  auth: any;
+  accessToken = '';
+  isCredentialsWrong = false;
+  loggedInUserId = '';
+
+  @ViewChild('userLogin') userLogin: any;
   @ViewChild('details') details: any;
   @ViewChild('detailsToPost') detailsToPost: any;
 
@@ -80,6 +91,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     const firebaseApp = initializeApp(this.firebaseConfig);
     // Initialize Realtime Database and get a reference to the service
     const database = getDatabase(firebaseApp);
+    this.auth = getAuth(firebaseApp);
 
     // Initiate map
     this.map = L.map('map').setView([39.340313, 22.937627], 13);
@@ -116,13 +128,22 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     // Add fire hydrant POI on map
     for (const marker of this.fireHydrantMarkers) {
-      const popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
+
+      let popupInfo = '';
+
+      if (this.isUserLogedIn) {
+        popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
         `<div class="d-grid">
           <button type="button" class="btn btn-secondary btn-sm edit"> 
             Edit
           </buton></div>
       `;
-
+      } else {
+        popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
+        `<div class="d-grid">
+      `;
+      }
+      
       L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
         .addTo(map)
         .bindPopup(popupInfo)
@@ -532,6 +553,44 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   UserLogin() {
 
+    this.modalService.open(this.userLogin, { centered: true, size: 'sm', windowClass: 'zindex' });
+
+  }
+
+  AuthenticateUser() {
+    
+    signInWithEmailAndPassword(this.auth, this.userEmail.trim(), this.userPassword.trim())
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        
+        this.isUserLogedIn = true;
+        this.isCredentialsWrong = false;
+        this.loggedInUserId = user.uid;
+
+        //this.accessToken = user.accessToken;
+
+        this.modalService.dismissAll();
+
+        this.GetFireHydrantsPOI();
+
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        console.log(error.code, error.code)
+
+        this.isUserLogedIn = false;
+        this.isCredentialsWrong = true;
+      });
+
+  }
+
+  dismissUserLoginModal() {
+    this.map.off('click');
+    this.map.closePopup();
+    this.modalService.dismissAll();
   }
 
   dismissDetailsModal() {

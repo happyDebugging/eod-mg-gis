@@ -1,3 +1,32 @@
+<!-- Login Modal -->
+<ng-template #userLogin let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5" id="exampleModalLabel">Σύνδεση στην εφαρμογή</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+      (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-3">
+        <label for="userEmail" class="col-form-label">Email:</label>
+        <input type="email" class="form-control" id="userEmail" name="userEmail" [(ngModel)]="userEmail">
+      </div>
+      <div class="mb-3">
+        <label for="userPassword" class="col-form-label">Κωδικός:</label>
+        <input type="password" class="form-control" id="userPassword" name="userPassword" [(ngModel)]="userPassword">
+      </div>
+      <div class="mb-3">
+        <label *ngIf="isCredentialsWrong" class="text-danger">Λάθος email ή κωδικός πρόσβασης.</label>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+      (click)="dismissUserLoginModal()">Άκυρο</button>
+    <button type="button" class="btn btn-primary" (click)="AuthenticateUser()">Σύνδεση</button>
+  </div>
+</ng-template>
+
 <!-- Update POI Modal -->
 <ng-template #details let-modal>
   <div class="modal-header">
@@ -146,9 +175,9 @@
           d="M4.893 0a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146A.5.5 0 0 0 11.107 0zM1 5.1 5.1 1h5.8L15 5.1v5.8L10.9 15H5.1L1 10.9z" />
       </svg></button>
 
-    <button type="button" id="addMarkerButton" class="btn btn-Light" (click)="AddNewFireHydrantPOI()"
-      [disabled]="isAddNewLocationActive"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-        fill="currentColor" class="bi bi-pin-map-fill" viewBox="0 0 16 16">
+    <button *ngIf="isUserLogedIn" type="button" id="addMarkerButton" class="btn btn-Light"
+      (click)="AddNewFireHydrantPOI()" [disabled]="isAddNewLocationActive"><svg xmlns="http://www.w3.org/2000/svg"
+        width="16" height="16" fill="currentColor" class="bi bi-pin-map-fill" viewBox="0 0 16 16">
         <path fill-rule="evenodd"
           d="M3.1 11.2a.5.5 0 0 1 .4-.2H6a.5.5 0 0 1 0 1H3.75L1.5 15h13l-2.25-3H10a.5.5 0 0 1 0-1h2.5a.5.5 0 0 1 .4.2l3 4a.5.5 0 0 1-.4.8H.5a.5.5 0 0 1-.4-.8z" />
         <path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999z" />
@@ -165,6 +194,14 @@
           d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z" />
         <path fill-rule="evenodd"
           d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+      </svg></button>
+
+    <button *ngIf="isUserLogedIn" type="button" id="loginButton" class="btn btn-Light"><svg
+        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-check"
+        viewBox="0 0 16 16">
+        <path
+          d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+        <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4" />
       </svg></button>
 
 
