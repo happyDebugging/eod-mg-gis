@@ -38,7 +38,8 @@ export class DbFunctionService {
             headers: {"Access-Control-Allow-Origin": "*"},  
             observe: 'response'
         }
-        return this.http.get<FireHydrantPoi>(environment.reverseGeocodeURL + environment.reverseGeocodeLat + Lat + environment.reverseGeocodeLng + Lng + environment.reverseGeocodeOptions);
+        //return this.http.get<FireHydrantPoi>(environment.reverseGeocodeURL + environment.reverseGeocodeLat + Lat + environment.reverseGeocodeLng + Lng + environment.reverseGeocodeOptions);
+        return this.http.get<FireHydrantPoi>(environment.reverseGeocodeURL + Lat + '%2C' + Lng + environment.apiKey + environment.reverseGeocodeOptions);
     }
 
     getNavigationWaypoints(currentUserLat: number, currentUserLng: number, nearestMarkerLat: number, nearestMarkerLng: number) {

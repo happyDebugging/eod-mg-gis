@@ -330,25 +330,73 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   GetAddressDetails() {
     this.getPOI = this.dbFunctionService.getAddressDetails(this.fireHydrantLat, this.fireHydrantLng)
       .pipe(map((response: any) => {
+        //console.log(response)
 
-        const geocodingResult = response.features[0].properties.geocoding;
+        // Reverse geocode with nominatim
+        // const geocodingResult = response.features[0].properties.geocoding;
+        // const addressName = geocodingResult.name;
+        // const addressStreet = geocodingResult.street;
+        // const addressHousenumber = geocodingResult.housenumber;
+        // const addressLocality = geocodingResult.locality;
 
-        const addressName = geocodingResult.name;
-        const addressStreet = geocodingResult.street;
-        const addressHousenumber = geocodingResult.housenumber;
-        const addressLocality = geocodingResult.locality;
+        // let fullAddress = '';
+        // if (addressName != null) {
+        //   fullAddress = fullAddress + addressName  + ', ';
+        // }
+        // if (addressStreet != null) {
+        //   fullAddress = fullAddress + addressStreet;
+        // }
+        // if (addressHousenumber != null) {
+        //   fullAddress = fullAddress + ' ' + addressHousenumber;
+        // }
+        // if (addressLocality != null) {
+        //   fullAddress = fullAddress + ', ' + addressLocality;
+        // }
+        // console.log(fullAddress)
+
+        // Reverse geocode with OpenCage
+        //road, house_number, hamlet/town/neighbourhood, city
+        let geocodingResult = response.features[0].properties.components;
+        let addressRoad = geocodingResult.road;
+        let addressHousenumber = geocodingResult.house_number;
+        let addressHamlet = geocodingResult.hamlet;
+        let addressTown = geocodingResult.town;
+        let addressNeighbourhood = geocodingResult.neighbourhood;
+        let addressCity = geocodingResult.city;
 
         let fullAddress = '';
-        if (addressStreet != null) {
-          fullAddress = fullAddress + addressStreet;
+
+        if (addressRoad != null && addressRoad != 'unnamed road') {
+          fullAddress = fullAddress + addressRoad;
         }
+
         if (addressHousenumber != null) {
-          fullAddress = fullAddress + ', ' + addressHousenumber;
+          fullAddress = fullAddress + ' ' + addressHousenumber;
         }
-        if (addressLocality != null) {
-          fullAddress = fullAddress + ', ' + addressLocality;
+        
+        if ((addressRoad != null && addressRoad != 'unnamed road') || addressHousenumber != null) {
+          fullAddress = fullAddress + ', ';
         }
-        console.log(fullAddress)
+
+        if (addressHamlet != null) {
+          fullAddress = fullAddress + addressHamlet;
+        } else if (addressTown != null) {
+          fullAddress = fullAddress + addressTown;
+        } else if (addressNeighbourhood != null) {
+          fullAddress = fullAddress + addressNeighbourhood;
+        }
+
+        if (addressHamlet != null || addressTown != null || addressNeighbourhood != null) {
+          fullAddress = fullAddress + ', ';
+        }
+
+        if (addressCity != null) {
+          if (addressCity == 'Δήμος Βόλου') addressCity = 'Βόλος'
+          fullAddress = fullAddress + addressCity;
+        }
+
+        this.fireHydrantAddress = fullAddress;
+        //console.log(fullAddress)
 
       }))
       .subscribe(
@@ -428,7 +476,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       this.ResetFireHydrantDetails();
 
       if (this.isAddNewLocationActive) {
-        console.log(event.latlng)
+        //console.log(event.latlng)
 
         this.eventL = event;
 
@@ -605,9 +653,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
         if (error.code = 'auth/invalid-credential') {
           this.errorMessageToShow = 'Λάθος email ή κωδικός πρόσβασης.';
-        } 
-        if (error.code = 'auth/too-many-requests') {
+        } else if (error.code = 'auth/too-many-requests') {
           this.errorMessageToShow = 'Υπέρβαση προσπαθειών σύνδεσης, προσπαθήστε αργότερα.';
+        } else {
+          this.errorMessageToShow = '';
         }
 
         this.isUserLoggedIn = false;
