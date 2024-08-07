@@ -24,11 +24,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   outerCircle!: L.CircleMarker<any>;
   setView = true;
   isNavigationOn = false;
+  isNavigationToSelectedMarker = false;
   isUserLoggedIn = false;
   distance = 0;
   minDistance = 10;
   closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', StateDescription: '', HoseDiameter: '', Responsible: '' };
   nearestMarker!: FireHydrantPoi;
+  selectedMarkerLat = 0;
+  selectedMarkerLng = 0;
   fireHydrantId = '';
   fireHydrantAddress = '';
   fireHydrantState = '';
@@ -110,7 +113,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(this.map);
 
     // this.SaveFireHydrantsPOIs();
@@ -146,13 +149,27 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       if (this.isUserLoggedIn) {
         popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
           `<div class="d-grid">
-          <button type="button" class="btn btn-secondary btn-sm edit"> 
-            Edit
-          </buton></div>
+            <button type="button" class="btn btn-secondary btn-sm edit"> 
+              Edit
+            </buton>
+            <button type="button" class="btn btn-primary btn-sm navigateToHere"> 
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sign-turn-left" viewBox="0 0 16 16">
+              <path d="M11 8.5A2.5 2.5 0 0 0 8.5 6H7V4.534a.25.25 0 0 0-.41-.192L4.23 6.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 7 8.466V7h1.5A1.5 1.5 0 0 1 10 8.5V11h1z"/>
+              <path fill-rule="evenodd" d="M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58.58.58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.48 1.48 0 0 1 0-2.098zm1.4.7a.495.495 0 0 0-.7 0L1.134 7.65a.495.495 0 0 0 0 .7l6.516 6.516a.495.495 0 0 0 .7 0l6.516-6.516a.495.495 0 0 0 0-.7L8.35 1.134Z"/>
+              </svg>
+            </buton>
+          </div>
       `;
       } else {
         popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
           `<div class="d-grid">
+            <button type="button" class="btn btn-primary btn-sm navigateToHere"> 
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sign-turn-left" viewBox="0 0 16 16">
+              <path d="M11 8.5A2.5 2.5 0 0 0 8.5 6H7V4.534a.25.25 0 0 0-.41-.192L4.23 6.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 7 8.466V7h1.5A1.5 1.5 0 0 1 10 8.5V11h1z"/>
+              <path fill-rule="evenodd" d="M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58.58.58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.48 1.48 0 0 1 0-2.098zm1.4.7a.495.495 0 0 0-.7 0L1.134 7.65a.495.495 0 0 0 0 .7l6.516 6.516a.495.495 0 0 0 .7 0l6.516-6.516a.495.495 0 0 0 0-.7L8.35 1.134Z"/>
+              </svg>
+            </buton>
+          </div>
       `;
       }
 
@@ -164,6 +181,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             .querySelector(".edit")
             .addEventListener("click", (e: any) => {
               this.FillDetailsForUpdate(marker);
+            }),
+            this.elementRef.nativeElement
+              .querySelector(".navigateToHere")
+              .addEventListener("click", (e: any) => {
+                this.NavigateToSelectedMarker(marker);
             });
         });
 
@@ -191,7 +213,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true, enableHighAccuracy: true });
 
       if (this.navigationPolyline) {
-        this.navigationPolyline.removeFrom(this.map);
+        //this.navigationPolyline.removeFrom(this.map);
       }
 
     }
@@ -231,12 +253,21 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       var featureGroup = L.featureGroup([this.outerCircle, this.circle]).addTo(this.map);
 
-      // Find nearest fire hydrant
-      this.FindNearestPoint(latlng);
+      if (!this.isNavigationToSelectedMarker) {
+        // Find nearest fire hydrant
+        this.FindNearestPoint(latlng);
+      }
 
       if (this.isNavigationOn) {
         // Fetch navigation route
-        this.GetNavigationWaypoints(latlng.lat, latlng.lng);
+        this.GetNavigationWaypoints(latlng.lat, latlng.lng, this.nearestMarker.Lat, this.nearestMarker.Lng);
+      } else {
+        this.navigationPolyline.removeFrom(this.map);
+      }
+
+      if (this.isNavigationToSelectedMarker) {
+        // Fetch navigation route
+        this.GetNavigationWaypoints(latlng.lat, latlng.lng, this.selectedMarkerLat, this.selectedMarkerLng);
       } else {
         this.navigationPolyline.removeFrom(this.map);
       }
@@ -257,6 +288,16 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       this.map.stopLocate();
       this.navigationPolyline.removeFrom(this.map);
     }
+  }
+
+  NavigateToSelectedMarker(marker: FireHydrantPoi) {
+    this.map.removeEventListener('locationfound');
+
+    this.selectedMarkerLat = marker.Lat;
+    this.selectedMarkerLng = marker.Lng;
+
+    this.isNavigationToSelectedMarker = true;
+    this.GetRealTimeUserLocation();
   }
 
 
@@ -373,7 +414,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         if (addressHousenumber != null) {
           fullAddress = fullAddress + ' ' + addressHousenumber;
         }
-        
+
         if ((addressRoad != null && addressRoad != 'unnamed road') || addressHousenumber != null) {
           fullAddress = fullAddress + ', ';
         }
@@ -567,9 +608,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       );
   }
 
-  GetNavigationWaypoints(currentUserLat: number, currentUserLng: number) {
+  GetNavigationWaypoints(currentUserLat: number, currentUserLng: number, markerLat: number, markerLng: number) {
 
-    this.getPOI = this.dbFunctionService.getNavigationWaypoints(currentUserLat, currentUserLng, this.nearestMarker.Lat, this.nearestMarker.Lng) //user location, nearest fire hydrant
+    this.getPOI = this.dbFunctionService.getNavigationWaypoints(currentUserLat, currentUserLng, markerLat, markerLng) //user location, nearest fire hydrant
       .pipe(map((response: any) => {
 
         this.navigationWayPoints = [];
@@ -679,6 +720,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       // Sign-out successful.
       this.isUserLoggedIn = false;
       localStorage.clear();
+
+      this.dismissDetailsModal();
 
       this.GetFireHydrantsPOI();
 
