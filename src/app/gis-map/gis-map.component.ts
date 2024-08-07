@@ -185,8 +185,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             this.elementRef.nativeElement
               .querySelector(".navigateToHere")
               .addEventListener("click", (e: any) => {
+                console.log('.navigateToHere')
                 this.NavigateToSelectedMarker(marker);
-            });
+              });
         });
 
     }
@@ -194,10 +195,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   }
 
   GetUserLocation() {
-    if (this.userLocationLat != 0 && this.userLocationLng != 0 && this.isNavigationOn) {
+    if (this.userLocationLat != 0 && this.userLocationLng != 0 && (this.isNavigationOn || this.isNavigationToSelectedMarker) ) {
       this.map.flyTo([this.userLocationLat, this.userLocationLng], 18);
     }
-    if (!this.isNavigationOn) {
+    if (!this.isNavigationOn && !this.isNavigationToSelectedMarker) {
       this.GetRealTimeUserLocation();
     }
   }
@@ -205,15 +206,15 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   GetRealTimeUserLocation() {
 
     // Locate user
-    if (!this.isNavigationOn) {
+    if (!this.isNavigationOn && !this.isNavigationToSelectedMarker) {
       const userLocation = this.map.locate({ setView: true, maxZoom: 18, enableHighAccuracy: true });
     } else {
       this.map.stopLocate();
-
+console.log('else')
       const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true, enableHighAccuracy: true });
 
       if (this.navigationPolyline) {
-        //this.navigationPolyline.removeFrom(this.map);
+        this.navigationPolyline.removeFrom(this.map);
       }
 
     }
@@ -259,14 +260,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       }
 
       if (this.isNavigationOn) {
+        console.log('isNavigationOn')
         // Fetch navigation route
         this.GetNavigationWaypoints(latlng.lat, latlng.lng, this.nearestMarker.Lat, this.nearestMarker.Lng);
-      } else {
-        this.navigationPolyline.removeFrom(this.map);
-      }
-
-      if (this.isNavigationToSelectedMarker) {
-        // Fetch navigation route
+      } else if (this.isNavigationToSelectedMarker) {
+        console.log('isNavigationToSelectedMarker')
+        // Fetch selected point navigation route
         this.GetNavigationWaypoints(latlng.lat, latlng.lng, this.selectedMarkerLat, this.selectedMarkerLng);
       } else {
         this.navigationPolyline.removeFrom(this.map);
@@ -279,6 +278,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   StartStopNavigation() {
 
     this.map.removeEventListener('locationfound');
+    this.isNavigationToSelectedMarker = false;
 
     if (!this.isNavigationOn) {
       this.isNavigationOn = true;
@@ -293,10 +293,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   NavigateToSelectedMarker(marker: FireHydrantPoi) {
     this.map.removeEventListener('locationfound');
 
+    this.isNavigationOn = false;
+    this.isNavigationToSelectedMarker = true;
+
     this.selectedMarkerLat = marker.Lat;
     this.selectedMarkerLng = marker.Lng;
 
-    this.isNavigationToSelectedMarker = true;
     this.GetRealTimeUserLocation();
   }
 
@@ -627,9 +629,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           this.navigationWayPoints.push(array);
         }
 
-        const nearestMarkerArray = [this.nearestMarker.Lat, this.nearestMarker.Lng];
-        this.navigationWayPoints.push(nearestMarkerArray);
-
+        if (this.isNavigationOn) {
+          const nearestMarkerArray = [this.nearestMarker.Lat, this.nearestMarker.Lng];
+          this.navigationWayPoints.push(nearestMarkerArray);
+        } else if (this.isNavigationToSelectedMarker) {
+          const selectedMarkerArray = [this.selectedMarkerLat, this.selectedMarkerLng];
+          this.navigationWayPoints.push(selectedMarkerArray);
+        }
+        
         if (this.navigationPolyline) {
           this.navigationPolyline.removeFrom(this.map);
         }
