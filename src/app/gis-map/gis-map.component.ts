@@ -307,7 +307,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
               const resObj = new FireHydrantPoi();
 
               resObj.Id = data.Id;
-              resObj.Lat = data.Lat;
+              resObj.Lat = data.Lat + 0.000015; // +offset of marker icon centre
               resObj.Lng = data.Lng;
               resObj.Address = data.Address;
               resObj.State = data.State;
