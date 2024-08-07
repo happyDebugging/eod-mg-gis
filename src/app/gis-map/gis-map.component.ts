@@ -118,10 +118,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     // this.SaveFireHydrantsPOIs();
 
-    this.GetFireHydrantsPOI();
-
-    this.GetRealTimeUserLocation();
-
   }
 
   ngAfterViewInit(): void {
@@ -137,6 +133,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     //   console.log(absolute, ' ', alpha, ' ', beta, ' ', gamma)
     // }
 
+    this.GetFireHydrantsPOI();
+
+    this.GetRealTimeUserLocation();
   }
 
   AddFireHydrantMarkersOnMap(map: L.Map) {
@@ -160,6 +159,24 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             </buton>
           </div>
       `;
+
+      L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
+        .addTo(map)
+        .bindPopup(popupInfo)
+        .on("popupopen", e => {
+          this.elementRef.nativeElement
+            .querySelector(".edit")
+            .addEventListener("click", (e: any) => {
+              this.FillDetailsForUpdate(marker);
+            }),
+          this.elementRef.nativeElement
+              .querySelector(".navigateToHere")
+              .addEventListener("click", (e: any) => {
+                console.log('.navigateToHere')
+                this.NavigateToSelectedMarker(marker);
+          })
+        });
+
       } else {
         popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
           `<div class="d-grid">
@@ -171,27 +188,22 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             </buton>
           </div>
       `;
-      }
 
       L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
         .addTo(map)
         .bindPopup(popupInfo)
         .on("popupopen", e => {
           this.elementRef.nativeElement
-            .querySelector(".edit")
-            .addEventListener("click", (e: any) => {
-              this.FillDetailsForUpdate(marker);
-            }),
-            this.elementRef.nativeElement
               .querySelector(".navigateToHere")
               .addEventListener("click", (e: any) => {
                 console.log('.navigateToHere')
                 this.NavigateToSelectedMarker(marker);
-              });
+          })
         });
+      }
 
     }
-    const editPointButton = L.DomUtil.get('button-submit');
+    //const editPointButton = L.DomUtil.get('button-submit');
   }
 
   GetUserLocation() {
