@@ -84,6 +84,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   };
 
   fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', StateDescription: '', HoseDiameter: '', Responsible: '' }];
+  fireHydrantLayer: L.Marker<any>[] = [];
+  fireHydrantLayerGroup: L.LayerGroup<any> = L.layerGroup(this.fireHydrantLayer);
 
   fireHydrantIcon = L.icon({
     iconUrl: 'fire-hydrant-marker-icon.png',
@@ -140,6 +142,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   AddFireHydrantMarkersOnMap(map: L.Map) {
 
+    //if (this.fireHydrantLayer) {
+      this.map.removeLayer(this.fireHydrantLayerGroup);
+    //}
+
     // Add fire hydrant POI on map
     for (const marker of this.fireHydrantMarkers) {
 
@@ -160,7 +166,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           </div>
       `;
 
-      L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
+      this.fireHydrantLayer.push(
+       L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
         .addTo(map)
         .bindPopup(popupInfo)
         .on("popupopen", e => {
@@ -175,7 +182,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
                 console.log('.navigateToHere')
                 this.NavigateToSelectedMarker(marker);
           })
-        });
+        })
+      );
 
       } else {
         popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
@@ -189,7 +197,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           </div>
       `;
 
-      L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
+      this.fireHydrantLayer.push(
+        L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
         .addTo(map)
         .bindPopup(popupInfo)
         .on("popupopen", e => {
@@ -199,8 +208,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
                 console.log('.navigateToHere')
                 this.NavigateToSelectedMarker(marker);
           })
-        });
+        })
+      )
       }
+
+      this.fireHydrantLayerGroup = L.layerGroup(this.fireHydrantLayer);
 
     }
     //const editPointButton = L.DomUtil.get('button-submit');
@@ -554,7 +566,7 @@ console.log('else')
 
   PostFireHydrantPOI() {
 
-    L.marker([this.eventL.latlng.lat, this.eventL.latlng.lng], { icon: this.fireHydrantIcon }).addTo(this.map);
+    //L.marker([this.eventL.latlng.lat, this.eventL.latlng.lng]).addTo(this.map);
 
     this.dismissDetailsModal();
 
