@@ -24,11 +24,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   outerCircle!: L.CircleMarker<any>;
   setView = true;
   isNavigationOn = false;
+  isNavigationToSelectedMarker = false;
   isUserLoggedIn = false;
   distance = 0;
   minDistance = 10;
   closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', StateDescription: '', HoseDiameter: '', Responsible: '' };
   nearestMarker!: FireHydrantPoi;
+  selectedMarkerLat = 0;
+  selectedMarkerLng = 0;
   fireHydrantId = '';
   fireHydrantAddress = '';
   fireHydrantState = '';
@@ -81,6 +84,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   };
 
   fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', StateDescription: '', HoseDiameter: '', Responsible: '' }];
+  fireHydrantLayer: L.Marker<any>[] = [];
+  fireHydrantLayerGroup: L.LayerGroup<any> = L.layerGroup(this.fireHydrantLayer);
 
   fireHydrantIcon = L.icon({
     iconUrl: 'fire-hydrant-marker-icon.png',
@@ -110,14 +115,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(this.map);
 
     // this.SaveFireHydrantsPOIs();
-
-    this.GetFireHydrantsPOI();
-
-    this.GetRealTimeUserLocation();
 
   }
 
@@ -134,9 +135,16 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     //   console.log(absolute, ' ', alpha, ' ', beta, ' ', gamma)
     // }
 
+    this.GetFireHydrantsPOI();
+
+    this.GetRealTimeUserLocation();
   }
 
   AddFireHydrantMarkersOnMap(map: L.Map) {
+
+    //if (this.fireHydrantLayer) {
+      this.map.removeLayer(this.fireHydrantLayerGroup);
+    //}
 
     // Add fire hydrant POI on map
     for (const marker of this.fireHydrantMarkers) {
@@ -146,17 +154,20 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       if (this.isUserLoggedIn) {
         popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
           `<div class="d-grid">
-          <button type="button" class="btn btn-secondary btn-sm edit"> 
-            Edit
-          </buton></div>
+            <button type="button" class="btn btn-secondary btn-sm edit"> 
+              Edit
+            </buton>
+            <button type="button" class="btn btn-primary btn-sm navigateToHere"> 
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sign-turn-left" viewBox="0 0 16 16">
+              <path d="M11 8.5A2.5 2.5 0 0 0 8.5 6H7V4.534a.25.25 0 0 0-.41-.192L4.23 6.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 7 8.466V7h1.5A1.5 1.5 0 0 1 10 8.5V11h1z"/>
+              <path fill-rule="evenodd" d="M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58.58.58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.48 1.48 0 0 1 0-2.098zm1.4.7a.495.495 0 0 0-.7 0L1.134 7.65a.495.495 0 0 0 0 .7l6.516 6.516a.495.495 0 0 0 .7 0l6.516-6.516a.495.495 0 0 0 0-.7L8.35 1.134Z"/>
+              </svg>
+            </buton>
+          </div>
       `;
-      } else {
-        popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
-          `<div class="d-grid">
-      `;
-      }
 
-      L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
+      this.fireHydrantLayer.push(
+       L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
         .addTo(map)
         .bindPopup(popupInfo)
         .on("popupopen", e => {
@@ -164,18 +175,54 @@ export class GisMapComponent implements OnInit, AfterViewInit {
             .querySelector(".edit")
             .addEventListener("click", (e: any) => {
               this.FillDetailsForUpdate(marker);
-            });
-        });
+            }),
+          this.elementRef.nativeElement
+              .querySelector(".navigateToHere")
+              .addEventListener("click", (e: any) => {
+                console.log('.navigateToHere')
+                this.NavigateToSelectedMarker(marker);
+          })
+        })
+      );
+
+      } else {
+        popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
+          `<div class="d-grid">
+            <button type="button" class="btn btn-primary btn-sm navigateToHere"> 
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sign-turn-left" viewBox="0 0 16 16">
+              <path d="M11 8.5A2.5 2.5 0 0 0 8.5 6H7V4.534a.25.25 0 0 0-.41-.192L4.23 6.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 7 8.466V7h1.5A1.5 1.5 0 0 1 10 8.5V11h1z"/>
+              <path fill-rule="evenodd" d="M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58.58.58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.48 1.48 0 0 1 0-2.098zm1.4.7a.495.495 0 0 0-.7 0L1.134 7.65a.495.495 0 0 0 0 .7l6.516 6.516a.495.495 0 0 0 .7 0l6.516-6.516a.495.495 0 0 0 0-.7L8.35 1.134Z"/>
+              </svg>
+            </buton>
+          </div>
+      `;
+
+      this.fireHydrantLayer.push(
+        L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
+        .addTo(map)
+        .bindPopup(popupInfo)
+        .on("popupopen", e => {
+          this.elementRef.nativeElement
+              .querySelector(".navigateToHere")
+              .addEventListener("click", (e: any) => {
+                console.log('.navigateToHere')
+                this.NavigateToSelectedMarker(marker);
+          })
+        })
+      )
+      }
+
+      this.fireHydrantLayerGroup = L.layerGroup(this.fireHydrantLayer);
 
     }
-    const editPointButton = L.DomUtil.get('button-submit');
+    //const editPointButton = L.DomUtil.get('button-submit');
   }
 
   GetUserLocation() {
-    if (this.userLocationLat != 0 && this.userLocationLng != 0 && this.isNavigationOn) {
+    if (this.userLocationLat != 0 && this.userLocationLng != 0 && (this.isNavigationOn || this.isNavigationToSelectedMarker) ) {
       this.map.flyTo([this.userLocationLat, this.userLocationLng], 18);
     }
-    if (!this.isNavigationOn) {
+    if (!this.isNavigationOn && !this.isNavigationToSelectedMarker) {
       this.GetRealTimeUserLocation();
     }
   }
@@ -183,11 +230,11 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   GetRealTimeUserLocation() {
 
     // Locate user
-    if (!this.isNavigationOn) {
+    if (!this.isNavigationOn && !this.isNavigationToSelectedMarker) {
       const userLocation = this.map.locate({ setView: true, maxZoom: 18, enableHighAccuracy: true });
     } else {
       this.map.stopLocate();
-
+console.log('else')
       const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true, enableHighAccuracy: true });
 
       if (this.navigationPolyline) {
@@ -231,12 +278,19 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       var featureGroup = L.featureGroup([this.outerCircle, this.circle]).addTo(this.map);
 
-      // Find nearest fire hydrant
-      this.FindNearestPoint(latlng);
+      if (!this.isNavigationToSelectedMarker) {
+        // Find nearest fire hydrant
+        this.FindNearestPoint(latlng);
+      }
 
       if (this.isNavigationOn) {
+        console.log('isNavigationOn')
         // Fetch navigation route
-        this.GetNavigationWaypoints(latlng.lat, latlng.lng);
+        this.GetNavigationWaypoints(latlng.lat, latlng.lng, this.nearestMarker.Lat, this.nearestMarker.Lng);
+      } else if (this.isNavigationToSelectedMarker) {
+        console.log('isNavigationToSelectedMarker')
+        // Fetch selected point navigation route
+        this.GetNavigationWaypoints(latlng.lat, latlng.lng, this.selectedMarkerLat, this.selectedMarkerLng);
       } else {
         this.navigationPolyline.removeFrom(this.map);
       }
@@ -248,6 +302,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   StartStopNavigation() {
 
     this.map.removeEventListener('locationfound');
+    this.isNavigationToSelectedMarker = false;
 
     if (!this.isNavigationOn) {
       this.isNavigationOn = true;
@@ -257,6 +312,18 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       this.map.stopLocate();
       this.navigationPolyline.removeFrom(this.map);
     }
+  }
+
+  NavigateToSelectedMarker(marker: FireHydrantPoi) {
+    this.map.removeEventListener('locationfound');
+
+    this.isNavigationOn = false;
+    this.isNavigationToSelectedMarker = true;
+
+    this.selectedMarkerLat = marker.Lat;
+    this.selectedMarkerLng = marker.Lng;
+
+    this.GetRealTimeUserLocation();
   }
 
 
@@ -373,7 +440,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         if (addressHousenumber != null) {
           fullAddress = fullAddress + ' ' + addressHousenumber;
         }
-        
+
         if ((addressRoad != null && addressRoad != 'unnamed road') || addressHousenumber != null) {
           fullAddress = fullAddress + ', ';
         }
@@ -499,7 +566,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   PostFireHydrantPOI() {
 
-    L.marker([this.eventL.latlng.lat, this.eventL.latlng.lng], { icon: this.fireHydrantIcon }).addTo(this.map);
+    //L.marker([this.eventL.latlng.lat, this.eventL.latlng.lng]).addTo(this.map);
 
     this.dismissDetailsModal();
 
@@ -567,9 +634,9 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       );
   }
 
-  GetNavigationWaypoints(currentUserLat: number, currentUserLng: number) {
+  GetNavigationWaypoints(currentUserLat: number, currentUserLng: number, markerLat: number, markerLng: number) {
 
-    this.getPOI = this.dbFunctionService.getNavigationWaypoints(currentUserLat, currentUserLng, this.nearestMarker.Lat, this.nearestMarker.Lng) //user location, nearest fire hydrant
+    this.getPOI = this.dbFunctionService.getNavigationWaypoints(currentUserLat, currentUserLng, markerLat, markerLng) //user location, nearest fire hydrant
       .pipe(map((response: any) => {
 
         this.navigationWayPoints = [];
@@ -586,9 +653,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           this.navigationWayPoints.push(array);
         }
 
-        const nearestMarkerArray = [this.nearestMarker.Lat, this.nearestMarker.Lng];
-        this.navigationWayPoints.push(nearestMarkerArray);
-
+        if (this.isNavigationOn) {
+          const nearestMarkerArray = [this.nearestMarker.Lat, this.nearestMarker.Lng];
+          this.navigationWayPoints.push(nearestMarkerArray);
+        } else if (this.isNavigationToSelectedMarker) {
+          const selectedMarkerArray = [this.selectedMarkerLat, this.selectedMarkerLng];
+          this.navigationWayPoints.push(selectedMarkerArray);
+        }
+        
         if (this.navigationPolyline) {
           this.navigationPolyline.removeFrom(this.map);
         }
@@ -679,6 +751,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       // Sign-out successful.
       this.isUserLoggedIn = false;
       localStorage.clear();
+
+      this.dismissDetailsModal();
 
       this.GetFireHydrantsPOI();
 
