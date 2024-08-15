@@ -140,7 +140,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.GetRealTimeUserLocation();
   }
 
-  AddFireHydrantMarkersOnMap(map: L.Map) {
+  AddFireHydrantMarkersOnMap() {
 
     //if (this.fireHydrantLayer) {
       this.map.removeLayer(this.fireHydrantLayerGroup);
@@ -173,7 +173,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       this.fireHydrantLayer.push(
        L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
-        .addTo(map)
+        .addTo(this.map)
         .bindPopup(popupInfo)
         .on("popupopen", e => {
           this.elementRef.nativeElement
@@ -205,7 +205,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       this.fireHydrantLayer.push(
         L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
-        .addTo(map)
+        .addTo(this.map)
         .bindPopup(popupInfo)
         .on("popupopen", e => {
           this.elementRef.nativeElement
@@ -390,7 +390,7 @@ console.log('else')
               this.fireHydrantMarkers.push(resObj);
             }
             //console.log(this.fireHydrantMarkers);
-            this.AddFireHydrantMarkersOnMap(this.map);
+            this.AddFireHydrantMarkersOnMap();
           }
         },
         err => {
