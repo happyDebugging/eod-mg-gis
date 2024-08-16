@@ -174,7 +174,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
         this.fireHydrantLayer.push(
           L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
-            .addTo(this.map)
             .bindPopup(popupInfo)
             .on("popupopen", e => {
               this.elementRef.nativeElement
@@ -206,7 +205,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
         this.fireHydrantLayer.push(
           L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
-            .addTo(this.map)
             .bindPopup(popupInfo)
             .on("popupopen", e => {
               this.elementRef.nativeElement
@@ -219,7 +217,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         )
       }
 
-      this.fireHydrantLayerGroup = L.layerGroup(this.fireHydrantLayer);
+      this.fireHydrantLayerGroup = L.layerGroup(this.fireHydrantLayer).addTo(this.map);
     }
 
   }
