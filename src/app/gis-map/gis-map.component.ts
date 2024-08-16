@@ -85,7 +85,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', StateDescription: '', HoseDiameter: '', Responsible: '' }];
   fireHydrantLayer: L.Marker<any>[] = [];
-  fireHydrantLayerGroup: L.LayerGroup<any> = L.layerGroup(this.fireHydrantLayer);
+  fireHydrantLayerGroup: L.LayerGroup<any> = L.layerGroup([]);
 
   fireHydrantIcon = L.icon({
     iconUrl: 'fire-hydrant-marker-icon.png',
@@ -142,9 +142,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   AddFireHydrantMarkersOnMap() {
 
-    //if (this.fireHydrantLayer) {
+    if (this.fireHydrantLayer.length > 0) {
       this.map.removeLayer(this.fireHydrantLayerGroup);
-    //}
+      this.fireHydrantLayer = [];
+    }
 
     // Add fire hydrant POI on map
     for (const marker of this.fireHydrantMarkers) {
@@ -171,24 +172,24 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           </div>
       `;
 
-      this.fireHydrantLayer.push(
-       L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
-        .addTo(this.map)
-        .bindPopup(popupInfo)
-        .on("popupopen", e => {
-          this.elementRef.nativeElement
-            .querySelector(".edit")
-            .addEventListener("click", (e: any) => {
-              this.FillDetailsForUpdate(marker);
-            }),
-          this.elementRef.nativeElement
-              .querySelector(".navigateToHere")
-              .addEventListener("click", (e: any) => {
-                console.log('.navigateToHere')
-                this.NavigateToSelectedMarker(marker);
-          })
-        })
-      );
+        this.fireHydrantLayer.push(
+          L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
+            .addTo(this.map)
+            .bindPopup(popupInfo)
+            .on("popupopen", e => {
+              this.elementRef.nativeElement
+                .querySelector(".edit")
+                .addEventListener("click", (e: any) => {
+                  this.FillDetailsForUpdate(marker);
+                }),
+                this.elementRef.nativeElement
+                  .querySelector(".navigateToHere")
+                  .addEventListener("click", (e: any) => {
+                    console.log('.navigateToHere')
+                    this.NavigateToSelectedMarker(marker);
+                  })
+            })
+        )
 
       } else {
         popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
@@ -203,28 +204,28 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           </div>
       `;
 
-      this.fireHydrantLayer.push(
-        L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
-        .addTo(this.map)
-        .bindPopup(popupInfo)
-        .on("popupopen", e => {
-          this.elementRef.nativeElement
-              .querySelector(".navigateToHere")
-              .addEventListener("click", (e: any) => {
-                console.log('.navigateToHere')
-                this.NavigateToSelectedMarker(marker);
-          })
-        })
-      )
+        this.fireHydrantLayer.push(
+          L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
+            .addTo(this.map)
+            .bindPopup(popupInfo)
+            .on("popupopen", e => {
+              this.elementRef.nativeElement
+                .querySelector(".navigateToHere")
+                .addEventListener("click", (e: any) => {
+                  console.log('.navigateToHere')
+                  this.NavigateToSelectedMarker(marker);
+                })
+            })
+        )
       }
 
       this.fireHydrantLayerGroup = L.layerGroup(this.fireHydrantLayer);
     }
-    
+
   }
 
   GetUserLocation() {
-    if (this.userLocationLat != 0 && this.userLocationLng != 0 && (this.isNavigationOn || this.isNavigationToSelectedMarker) ) {
+    if (this.userLocationLat != 0 && this.userLocationLng != 0 && (this.isNavigationOn || this.isNavigationToSelectedMarker)) {
       this.map.flyTo([this.userLocationLat, this.userLocationLng], 18);
     }
     if (!this.isNavigationOn && !this.isNavigationToSelectedMarker) {
@@ -239,7 +240,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       const userLocation = this.map.locate({ setView: true, maxZoom: 18, enableHighAccuracy: true });
     } else {
       this.map.stopLocate();
-console.log('else')
+      console.log('else')
       const userLocation = this.map.locate({ setView: false, maxZoom: 16, watch: true, enableHighAccuracy: true });
 
       if (this.navigationPolyline) {
@@ -356,7 +357,7 @@ console.log('else')
 
     this.getPOI = this.dbFunctionService.getFireHydrantsFromDb()
       .pipe(map((response: any) => {
-        const markerArray: FireHydrantPoi[] = [];
+        let markerArray: FireHydrantPoi[] = [];
 
         for (const key in response) {
           if (response.hasOwnProperty(key)) {
@@ -379,7 +380,7 @@ console.log('else')
               const resObj = new FireHydrantPoi();
 
               resObj.Id = data.Id;
-              resObj.Lat = data.Lat + 0.000015; // +offset of marker icon centre
+              resObj.Lat = data.Lat; // + 0.000015; // +offset of marker icon centre
               resObj.Lng = data.Lng;
               resObj.Address = data.Address;
               resObj.State = data.State;
@@ -665,7 +666,7 @@ console.log('else')
           const selectedMarkerArray = [this.selectedMarkerLat, this.selectedMarkerLng];
           this.navigationWayPoints.push(selectedMarkerArray);
         }
-        
+
         if (this.navigationPolyline) {
           this.navigationPolyline.removeFrom(this.map);
         }
