@@ -89,7 +89,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   fireHydrantIcon = L.icon({
     iconUrl: 'fire-hydrant-marker-icon.png',
-    iconSize: [45, 45]
+    iconSize: [45, 45],
+    iconAnchor: [22.5, 35]
   });
 
   userLocationIcon = L.icon({
