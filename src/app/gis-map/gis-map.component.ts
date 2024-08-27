@@ -513,6 +513,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       fireHydrants.StateDescription = m.StateDescription;
       fireHydrants.HoseDiameter = m.HoseDiameter;
       fireHydrants.Responsible = m.Responsible;
+      fireHydrants.Type = m.Type;
 
       this.dbFunctionService.postFireHydrantsToDb(fireHydrants)
         .subscribe(
