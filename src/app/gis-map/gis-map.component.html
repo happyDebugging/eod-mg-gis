@@ -112,16 +112,30 @@
           [(ngModel)]="fireHydrantAddress">
       </div>
       <div class="mb-3">
+        <label for="fireHydrantType" class="col-form-label">Τύπος:</label>
+        <select id="fireHydrantType" class="form-control" name="fireHydrantType" [(ngModel)]="fireHydrantType">
+          <option value="" selected disabled>
+            Επιλέξτε...
+          </option>
+          <option value="fire_hydrant">
+            Κρουνός
+          </option>
+          <option value="water_tank">
+            Δεξαμενή
+          </option>
+        </select>
+      </div>
+      <div class="mb-3">
         <label for="fireHydrantState" class="col-form-label">Κατάσταση:</label>
         <select id="fireHydrantState" class="form-control" name="fireHydrantState" [(ngModel)]="fireHydrantState">
           <option value="" selected disabled>
             Επιλέξτε...
           </option>
           <option value="active">
-            Ενεργός
+            Ενεργό
           </option>
           <option value="inactive">
-            Μη Ενεργός
+            Μη Ενεργό
           </option>
           <option value="undefined">
             Δεν Ελέγχθηκε
@@ -129,8 +143,8 @@
         </select>
       </div>
       <div class="mb-3">
-        <label for="fireHydrantType" class="col-form-label">Τύπος μάνικας:</label>
-        <select id="fireHydrantType" class="form-control" name="fireHydrantType" [(ngModel)]="fireHydrantType">
+        <label for="hoseDiameter" class="col-form-label">Διάμετρος μάνικας:</label>
+        <select id="hoseDiameter" class="form-control" name="hoseDiameter" [(ngModel)]="hoseDiameter">
           <option value="" selected disabled>
             Επιλέξτε...
           </option>
@@ -144,7 +158,7 @@
             65
           </option>
           <option value="undefined">
-            Αόριστος Τύπος Μάνικας
+            Αόριστο
           </option>
         </select>
       </div>
@@ -170,16 +184,30 @@
           [(ngModel)]="fireHydrantAddress">
       </div>
       <div class="mb-3">
+        <label for="fireHydrantType" class="col-form-label">Τύπος:</label>
+        <select id="fireHydrantType" class="form-control" name="fireHydrantType" [(ngModel)]="fireHydrantType">
+          <option value="" selected disabled>
+            Επιλέξτε...
+          </option>
+          <option value="fire_hydrant">
+            Κρουνός
+          </option>
+          <option value="water_tank">
+            Δεξαμενή
+          </option>
+        </select>
+      </div>
+      <div class="mb-3">
         <label for="fireHydrantState" class="col-form-label">Κατάσταση:</label>
         <select id="fireHydrantState" class="form-control" name="fireHydrantState" [(ngModel)]="fireHydrantState">
           <option value="" selected disabled>
             Επιλέξτε...
           </option>
           <option value="active">
-            Ενεργός
+            Ενεργό
           </option>
           <option value="inactive">
-            Μη Ενεργός
+            Μη Ενεργό
           </option>
           <option value="undefined">
             Δεν Ελέγχθηκε
@@ -187,8 +215,8 @@
         </select>
       </div>
       <div class="mb-3">
-        <label for="fireHydrantType" class="col-form-label">Τύπος μάνικας:</label>
-        <select id="fireHydrantType" class="form-control" name="fireHydrantType" [(ngModel)]="fireHydrantType">
+        <label for="hoseDiameter" class="col-form-label">Διάμετρος μάνικας:</label>
+        <select id="hoseDiameter" class="form-control" name="hoseDiameter" [(ngModel)]="hoseDiameter">
           <option value="" selected disabled>
             Επιλέξτε...
           </option>
@@ -202,7 +230,7 @@
             65
           </option>
           <option value="undefined">
-            Αόριστος Τύπος Μάνικας
+            Αόριστο
           </option>
         </select>
       </div>

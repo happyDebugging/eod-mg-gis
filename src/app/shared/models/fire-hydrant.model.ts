@@ -7,4 +7,5 @@ export class FireHydrantPoi {
     StateDescription!: string;
     HoseDiameter!: string;
     Responsible!: string;
+    Type!: string;
 }

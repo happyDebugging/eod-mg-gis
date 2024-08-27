@@ -28,7 +28,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   isUserLoggedIn = false;
   distance = 0;
   minDistance = 10;
-  closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', StateDescription: '', HoseDiameter: '', Responsible: '' };
+  closestPoint: FireHydrantPoi = { Id: '', Lat: 0, Lng: 0, Address: 'a', State: 'b', StateDescription: '', HoseDiameter: '', Responsible: '', Type: '' };
   nearestMarker!: FireHydrantPoi;
   selectedMarkerLat = 0;
   selectedMarkerLng = 0;
@@ -36,6 +36,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   fireHydrantAddress = '';
   fireHydrantState = '';
   fireHydrantStateDescription = '';
+  hoseDiameter = '';
   fireHydrantType = '';
   fireHydrantLat = 0;
   fireHydrantLng = 0;
@@ -83,12 +84,18 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     appId: "1:130989582145:web:6855bec56d2dfd8cb7a3c0"
   };
 
-  fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', StateDescription: '', HoseDiameter: '', Responsible: '' }];
+  fireHydrantMarkers = [{ Id: '', Lat: 0, Lng: 0, Address: '', State: '', StateDescription: '', HoseDiameter: '', Responsible: '', Type: '' }];
   fireHydrantLayer: L.Marker<any>[] = [];
   fireHydrantLayerGroup: L.LayerGroup<any> = L.layerGroup([]);
 
   fireHydrantIcon = L.icon({
     iconUrl: 'fire-hydrant-marker-icon.png',
+    iconSize: [45, 45],
+    iconAnchor: [22.5, 32]
+  });
+
+  waterTankIcon = L.icon({
+    iconUrl: 'water-tank-marker-icon.png',
     iconSize: [45, 45],
     iconAnchor: [22.5, 32]
   });
@@ -148,8 +155,16 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       this.fireHydrantLayer = [];
     }
 
+    let markerIcon = this.fireHydrantIcon;
+
     // Add fire hydrant POI on map
     for (const marker of this.fireHydrantMarkers) {
+
+      if (marker.Type == 'fire_hydrant') {
+        markerIcon = this.fireHydrantIcon;
+      } else if (marker.Type == 'water_tank') {
+        markerIcon = this.waterTankIcon;
+      }
 
       let popupInfo = '';
 
@@ -174,7 +189,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       `;
 
         this.fireHydrantLayer.push(
-          L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
+          L.marker([marker.Lat, marker.Lng], { icon: markerIcon })
             .bindPopup(popupInfo)
             .on("popupopen", e => {
               this.elementRef.nativeElement
@@ -205,7 +220,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       `;
 
         this.fireHydrantLayer.push(
-          L.marker([marker.Lat, marker.Lng], { icon: this.fireHydrantIcon })
+          L.marker([marker.Lat, marker.Lng], { icon: markerIcon })
             .bindPopup(popupInfo)
             .on("popupopen", e => {
               this.elementRef.nativeElement
@@ -385,7 +400,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
               resObj.State = data.State;
               resObj.StateDescription = data.StateDescription;
               resObj.HoseDiameter = data.HoseDiameter;
-              resObj.Responsible = data.HoseDiameter;
+              resObj.Responsible = data.Responsible;
+              resObj.Type = data.Type;
 
               this.fireHydrantMarkers.push(resObj);
             }
@@ -520,11 +536,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.fireHydrantLat = marker.Lat;
     this.fireHydrantLng = marker.Lng;
     this.fireHydrantAddress = marker.Address;
+    this.fireHydrantType = marker.Type;
     this.fireHydrantState = marker.State;
-    if (this.fireHydrantState == 'active') { this.fireHydrantStateDescription = 'Ενεργός'; }
-    else if (this.fireHydrantState == 'inactive') { this.fireHydrantStateDescription = 'Μη Ενεργός'; }
+    if (this.fireHydrantState == 'active') { this.fireHydrantStateDescription = 'Ενεργό'; }
+    else if (this.fireHydrantState == 'inactive') { this.fireHydrantStateDescription = 'Μη Ενεργό'; }
     else if (this.fireHydrantState == 'undefined') { this.fireHydrantStateDescription = 'Δεν Ελέγχθηκε'; }
-    this.fireHydrantType = marker.HoseDiameter;
+    this.hoseDiameter = marker.HoseDiameter;
 
     this.modalService.open(this.details, { centered: true, size: 'sm', windowClass: 'zindex' });
 
@@ -581,11 +598,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     fireHydrant.Lat = this.fireHydrantLat;
     fireHydrant.Lng = this.fireHydrantLng;
     fireHydrant.Address = this.fireHydrantAddress;
+    fireHydrant.Type = this.fireHydrantType;
     fireHydrant.State = this.fireHydrantState;
-    if (this.fireHydrantState == 'active') { fireHydrant.StateDescription = 'Ενεργός'; }
-    else if (this.fireHydrantState == 'inactive') { fireHydrant.StateDescription = 'Μη Ενεργός'; }
+    if (this.fireHydrantState == 'active') { fireHydrant.StateDescription = 'Ενεργή'; }
+    else if (this.fireHydrantState == 'inactive') { fireHydrant.StateDescription = 'Μη Ενεργή'; }
     else if (this.fireHydrantState == 'undefined') { fireHydrant.StateDescription = 'Δεν Ελέγχθηκε'; }
-    fireHydrant.HoseDiameter = this.fireHydrantType;
+    fireHydrant.HoseDiameter = this.hoseDiameter;
     fireHydrant.Responsible = this.loggedInUserId;
 
     this.dbFunctionService.postFireHydrantsToDb(fireHydrant)
@@ -614,11 +632,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     updatedMarker.Lat = this.fireHydrantLat;
     updatedMarker.Lng = this.fireHydrantLng;
     updatedMarker.Address = this.fireHydrantAddress;
+    updatedMarker.Type = this.fireHydrantType;
     updatedMarker.State = this.fireHydrantState;
-    if (this.fireHydrantState == 'active') { updatedMarker.StateDescription = 'Ενεργός'; }
-    else if (this.fireHydrantState == 'inactive') { updatedMarker.StateDescription = 'Μη Ενεργός'; }
+    if (this.fireHydrantState == 'active') { updatedMarker.StateDescription = 'Ενεργό'; }
+    else if (this.fireHydrantState == 'inactive') { updatedMarker.StateDescription = 'Μη Ενεργό'; }
     else if (this.fireHydrantState == 'undefined') { updatedMarker.StateDescription = 'Δεν Ελέγχθηκε'; }
-    updatedMarker.HoseDiameter = this.fireHydrantType;
+    updatedMarker.HoseDiameter = this.hoseDiameter;
     updatedMarker.Responsible = this.loggedInUserId;
 
     this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(updatedMarker)
@@ -827,9 +846,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.fireHydrantLat = 0;
     this.fireHydrantLng = 0;
     this.fireHydrantAddress = '';
+    this.fireHydrantType = '';
     this.fireHydrantState = '';
     this.fireHydrantStateDescription = '';
-    this.fireHydrantType = '';
+    this.hoseDiameter = '';
   }
 
   ngOnDestroy() {
