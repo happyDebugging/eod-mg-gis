@@ -166,27 +166,42 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         markerIcon = this.waterTankIcon;
       }
 
-      let popupInfo = '';
+      let popupInfo = L.popup({}).setContent('');
 
       if (this.isUserLoggedIn) {
-        popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
-          `<div class="d-grid">
-            <button type="button" class="btn btn-secondary btn-sm edit"> 
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-              </svg>
-              Edit
-            </buton>
-            <button type="button" class="btn btn-primary btn-sm navigateToHere"> 
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sign-turn-left" viewBox="0 0 16 16">
-              <path d="M11 8.5A2.5 2.5 0 0 0 8.5 6H7V4.534a.25.25 0 0 0-.41-.192L4.23 6.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 7 8.466V7h1.5A1.5 1.5 0 0 1 10 8.5V11h1z"/>
-              <path fill-rule="evenodd" d="M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58.58.58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.48 1.48 0 0 1 0-2.098zm1.4.7a.495.495 0 0 0-.7 0L1.134 7.65a.495.495 0 0 0 0 .7l6.516 6.516a.495.495 0 0 0 .7 0l6.516-6.516a.495.495 0 0 0 0-.7L8.35 1.134Z"/>
-              </svg>
-              Πλοήγηση
-            </buton>
-          </div>
-      `;
+        popupInfo = L.popup({ minWidth: 150, maxWidth: 150 })
+          .setContent(
+            '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
+            `
+            <div class="d-grid">
+              
+                <button type="button" class="btn btn-secondary btn-sm mb-1 edit"> 
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                  </svg>
+                  Επεξεργασία
+                </buton>
+                
+                <button type="button" class="btn btn-primary btn-sm mb-1 navigateToHere"> 
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sign-turn-left" viewBox="0 0 16 16">
+                  <path d="M11 8.5A2.5 2.5 0 0 0 8.5 6H7V4.534a.25.25 0 0 0-.41-.192L4.23 6.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 7 8.466V7h1.5A1.5 1.5 0 0 1 10 8.5V11h1z"/>
+                  <path fill-rule="evenodd" d="M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58.58.58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.48 1.48 0 0 1 0-2.098zm1.4.7a.495.495 0 0 0-.7 0L1.134 7.65a.495.495 0 0 0 0 .7l6.516 6.516a.495.495 0 0 0 .7 0l6.516-6.516a.495.495 0 0 0 0-.7L8.35 1.134Z"/>
+                  </svg>
+                  Πλοήγηση
+                </buton>
+              
+                <button type="button" class="btn btn-info btn-sm moveMarker"> 
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-move" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10M.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8"/>
+                  </svg>
+                  Μετατόπιση
+                </buton>
+              
+            </div>
+      `
+          );
+
 
         this.fireHydrantLayer.push(
           L.marker([marker.Lat, marker.Lng], { icon: markerIcon })
@@ -202,13 +217,21 @@ export class GisMapComponent implements OnInit, AfterViewInit {
                   .addEventListener("click", (e: any) => {
                     console.log('.navigateToHere')
                     this.NavigateToSelectedMarker(marker);
+                  }),
+                this.elementRef.nativeElement
+                  .querySelector(".moveMarker")
+                  .addEventListener("click", (e: any) => {
+                    console.log('.moveMarker')
+                    this.MoveMarker(marker);
                   })
             })
         )
 
       } else {
-        popupInfo = '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
-          `<div class="d-grid">
+        popupInfo = L.popup({ minWidth: 150, maxWidth: 150 })
+          .setContent(
+            '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
+            `<div class="d-grid">
             <button type="button" class="btn btn-primary btn-sm navigateToHere"> 
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sign-turn-left" viewBox="0 0 16 16">
               <path d="M11 8.5A2.5 2.5 0 0 0 8.5 6H7V4.534a.25.25 0 0 0-.41-.192L4.23 6.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 7 8.466V7h1.5A1.5 1.5 0 0 1 10 8.5V11h1z"/>
@@ -217,7 +240,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
               Πλοήγηση
             </buton>
           </div>
-      `;
+      `);
 
         this.fireHydrantLayer.push(
           L.marker([marker.Lat, marker.Lng], { icon: markerIcon })
@@ -344,6 +367,15 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.selectedMarkerLng = marker.Lng;
 
     this.GetRealTimeUserLocation();
+  }
+
+  MoveMarker(marker: FireHydrantPoi) {
+    this.map.closePopup();
+    L.marker([marker.Lat, marker.Lng]).dragging?.enable();
+    // movedMarker.on('dragend', function (e) {
+    //   console.log(e.target._latlng.lat);
+    //   console.log(e.target._latlng.lng);
+    // });
   }
 
 
