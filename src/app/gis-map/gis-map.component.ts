@@ -170,7 +170,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       let popupInfo = L.popup({}).setContent('');
 
       if (this.isUserLoggedIn) {
-        popupInfo = L.popup({ minWidth: 150, maxWidth: 150 })
+        popupInfo = L.popup({ minWidth: 150, maxWidth: 150, offset: [0, -8] })
           .setContent(
             '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
             `
@@ -229,7 +229,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         )
 
       } else {
-        popupInfo = L.popup({ minWidth: 150, maxWidth: 150 })
+        popupInfo = L.popup({ minWidth: 150, maxWidth: 150, offset: [0, -8] })
           .setContent(
             '<b>' + marker.Address + '</b><br>' + marker.StateDescription + '  ' +
             `<div class="d-grid">
