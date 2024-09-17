@@ -148,6 +148,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       console.log(this.absolute, ' ', this.alpha, ' ', this.beta, ' ', this.gamma)
     });
+    ondeviceorientation = (event) => {
+      this.absolute = event.absolute;
+      this.alpha != event.alpha;
+      this.beta != event.beta;
+      this.gamma != event.gamma;
+
+      console.log(this.absolute, ' ', this.alpha, ' ', this.beta, ' ', this.gamma)
+    };
 
     this.GetFireHydrantsPOI();
 
