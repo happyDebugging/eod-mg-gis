@@ -127,7 +127,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.auth = getAuth(firebaseApp);
 
     // Initiate map
-    this.map = L.map('map', {attributionControl: false}).setView([39.340313, 22.937627], 13);
+    this.map = L.map('map', { attributionControl: false }).setView([39.340313, 22.937627], 13);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
@@ -140,22 +140,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
 
     // Get device orientation
-    window.addEventListener("deviceorientation", (event) => {
+    window.addEventListener("deviceorientation", (event: any) => {
       this.absolute = event.absolute;
-      this.alpha != event.alpha;
-      this.beta != event.beta;
-      this.gamma != event.gamma;
-
+      this.alpha = event.alpha;
+      this.beta = event.beta;
+      this.gamma = event.gamma;
+      // Do stuff with the new orientation data
       console.log(this.absolute, ' ', this.alpha, ' ', this.beta, ' ', this.gamma)
-    });
-    ondeviceorientation = (event) => {
-      this.absolute = event.absolute;
-      this.alpha != event.alpha;
-      this.beta != event.beta;
-      this.gamma != event.gamma;
-
-      console.log(this.absolute, ' ', this.alpha, ' ', this.beta, ' ', this.gamma)
-    };
+    }, true);
 
     this.GetFireHydrantsPOI();
 
