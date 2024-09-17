@@ -142,10 +142,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     // Get device orientation
     window.addEventListener("deviceorientation", (event: any) => {
       this.absolute = event.absolute;
-      this.alpha = event.alpha;
-      this.beta = event.beta;
-      this.gamma = event.gamma;
-      // Do stuff with the new orientation data
+      this.alpha = event.alpha; // x
+      this.beta = event.beta; // y
+      this.gamma = event.gamma; // z
+      
       console.log(this.absolute, ' ', this.alpha, ' ', this.beta, ' ', this.gamma)
     }, true);
 
