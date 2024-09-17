@@ -59,7 +59,7 @@
   z-index: 99000 !important;
 }
 
-#addMarkerAlert {
+#addMarkerAlert, #moveMarkerAlert {
   position: absolute;
   width: 65%;
   left: 17.5%;

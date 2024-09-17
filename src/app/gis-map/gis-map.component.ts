@@ -41,6 +41,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   fireHydrantLat = 0;
   fireHydrantLng = 0;
   isAddNewLocationActive = false;
+  isMoveMarkerActive = false;
+  markerToMove!: L.Marker<any>;
   eventL!: L.LeafletMouseEvent;
   zoomLevel = 19;
 
@@ -371,21 +373,27 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   MoveMarker(marker: FireHydrantPoi) {
     this.map.closePopup();
 
-    let moveableMarker = this.fireHydrantLayer[this.fireHydrantMarkers.indexOf(marker)];
-    moveableMarker.dragging?.enable();
+    this.isMoveMarkerActive = true;
 
-    moveableMarker.on('dragend', function (e) {
+    this.markerToMove = this.fireHydrantLayer[this.fireHydrantMarkers.indexOf(marker)];
+    //this.markerToMove = moveableMarker;
+
+    this.markerToMove.dragging?.enable();
+
+    this.markerToMove.on('dragend', (e) => {
       //console.log(e.target._latlng.lat);
       //console.log(e.target._latlng.lng);
 
       marker.Lat = e.target._latlng.lat;
       marker.Lng = e.target._latlng.lng;
 
-      moveableMarker.dragging?.disable();
+      this.markerToMove.dragging?.disable();
 
     });
 
-    moveableMarker.on('dragend', (e) => {
+    this.markerToMove.on('dragend', (e) => {
+      this.isMoveMarkerActive = false;
+
       this.UpdateLocationOfMovedMarker(marker);
     });
   }
@@ -406,6 +414,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           console.log(err);
         }
       );
+  }
+
+  CancelMoveMarker() {
+    this.isMoveMarkerActive = false;
+
+    this.markerToMove.dragging?.disable();
   }
 
 
