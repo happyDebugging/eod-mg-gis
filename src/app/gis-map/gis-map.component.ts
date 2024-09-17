@@ -371,11 +371,42 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   MoveMarker(marker: FireHydrantPoi) {
     this.map.closePopup();
-    L.marker([marker.Lat, marker.Lng]).dragging?.enable();
-    // movedMarker.on('dragend', function (e) {
-    //   console.log(e.target._latlng.lat);
-    //   console.log(e.target._latlng.lng);
-    // });
+
+    let moveableMarker = this.fireHydrantLayer[this.fireHydrantMarkers.indexOf(marker)];
+    moveableMarker.dragging?.enable();
+
+    moveableMarker.on('dragend', function (e) {
+      //console.log(e.target._latlng.lat);
+      //console.log(e.target._latlng.lng);
+
+      marker.Lat = e.target._latlng.lat;
+      marker.Lng = e.target._latlng.lng;
+
+      moveableMarker.dragging?.disable();
+
+    });
+
+    moveableMarker.on('dragend', (e) => {
+      this.UpdateLocationOfMovedMarker(marker);
+    });
+  }
+
+  UpdateLocationOfMovedMarker(movedMarker: FireHydrantPoi) {
+
+    this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(movedMarker)
+      .pipe(map((response: any) => {
+
+      }))
+      .subscribe(
+        (res: any) => {
+          if ((res != null) || (res != undefined)) {
+            console.log(res)
+          }
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
 
 
