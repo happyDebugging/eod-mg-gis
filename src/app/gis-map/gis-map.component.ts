@@ -119,11 +119,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.auth = getAuth(firebaseApp);
 
     // Initiate map
-    this.map = L.map('map').setView([39.340313, 22.937627], 13);
+    this.map = L.map('map', {attributionControl: false}).setView([39.340313, 22.937627], 13);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      maxZoom: 19
     }).addTo(this.map);
 
     // this.SaveFireHydrantsPOIs();
