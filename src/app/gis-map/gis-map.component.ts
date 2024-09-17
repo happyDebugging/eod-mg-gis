@@ -64,6 +64,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   isChangePasswordSuccessfull = false;
   errorMessageToShow = '';
 
+  // test orientation
+  absolute = false;
+  alpha = 0;
+  beta = 0;
+  gamma = 0;
+
   @ViewChild('userLogin') userLogin: any;
   @ViewChild('userSignOut') userSignOut: any;
   @ViewChild('manageUserAccount') manageUserAccount: any;
@@ -133,16 +139,15 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
 
-    // // Get device orientation
-    // window.addEventListener("deviceorientation", handleOrientation, true);
-    // function handleOrientation(event: any) {
-    //   var absolute = event.absolute;
-    //   var alpha = event.alpha;
-    //   var beta = event.beta;
-    //   var gamma = event.gamma;
-    //   // Do stuff with the new orientation data
-    //   console.log(absolute, ' ', alpha, ' ', beta, ' ', gamma)
-    // }
+    // Get device orientation
+    window.addEventListener("deviceorientation", (event) => {
+      this.absolute = event.absolute;
+      this.alpha != event.alpha;
+      this.beta != event.beta;
+      this.gamma != event.gamma;
+
+      console.log(this.absolute, ' ', this.alpha, ' ', this.beta, ' ', this.gamma)
+    });
 
     this.GetFireHydrantsPOI();
 
