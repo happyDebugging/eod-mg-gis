@@ -22,6 +22,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   marker!: L.Marker<any>;
   circle!: L.CircleMarker<any>;
   outerCircle!: L.CircleMarker<any>;
+  orientationPolygon!: L.Polygon<any>;
   setView = true;
   isNavigationOn = false;
   isNavigationToSelectedMarker = false;
@@ -145,7 +146,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       this.alpha = event.alpha; // x
       this.beta = event.beta; // y
       this.gamma = event.gamma; // z
-      
+
       console.log(this.absolute, ' ', this.alpha, ' ', this.beta, ' ', this.gamma)
     }, true);
 
@@ -308,6 +309,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       if (this.circle) {
         this.map.removeLayer(this.circle);
         this.map.removeLayer(this.outerCircle);
+        this.map.removeLayer(this.orientationPolygon);
       }
 
       this.outerCircle = L.circleMarker(latlng,
@@ -325,7 +327,28 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           fillOpacity: 1
         });
 
-      var featureGroup = L.featureGroup([this.outerCircle, this.circle]).addTo(this.map);
+      let a = this.alpha;
+      let a1 = this.alpha - 10;
+      let a2 = this.alpha + 10;
+      let x1 = (this.map.getZoom() / 8) * Math.cos(a1) / 10000;
+      let y1 = (this.map.getZoom() / 8) * Math.sin(a1) / 10000;
+      let x2 = (this.map.getZoom() / 8) * Math.cos(a2) / 10000;
+      let y2 = (this.map.getZoom() / 8) * Math.sin(a2) / 10000;
+
+      console.log(this.map.getZoom())
+
+      this.orientationPolygon = L.polygon([
+        [latlng.lat, latlng.lng],
+        [latlng.lat + y1, latlng.lng + x1],
+        [latlng.lat + y2, latlng.lng + x2]
+        //[latlng.lat + 0.0001, latlng.lng - 0.0001],
+        //[latlng.lat + 0.0001, latlng.lng + 0.0001]
+      ],
+        { color: 'red',
+          smoothFactor: 5
+        });
+
+      var featureGroup = L.featureGroup([this.outerCircle, this.circle, this.orientationPolygon]).addTo(this.map);
 
       if (!this.isNavigationToSelectedMarker) {
         // Find nearest fire hydrant
