@@ -23,6 +23,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   marker!: L.Marker<any>;
   circle!: L.CircleMarker<any>;
   outerCircle!: L.CircleMarker<any>;
+  orientationMarker!: LMR.RotatedMarker;
   orientationPolygon!: L.Polygon<any>;
   setView = true;
   isNavigationOn = false;
@@ -316,28 +317,28 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       if (this.circle) {
         this.map.removeLayer(this.circle);
         this.map.removeLayer(this.outerCircle);
-        this.map.removeLayer(this.orientationPolygon);
+        this.map.removeLayer(this.orientationMarker);
       }
 
-      let orientationMarker = new LMR.RotatedMarker([latlng.lat, latlng.lng], { 
+      this.orientationMarker = new LMR.RotatedMarker([latlng.lat, latlng.lng], { 
         icon: this.orientationIcon,
-        rotationAngle: this.alpha,
+        rotationAngle: this.alpha + 90,
         //rotationOrigin: 'center'
-      });
+      }).addTo(this.map);
       this.outerCircle = L.circleMarker(latlng,
         {
           radius: 14, //radius: accuracy
           color: '#a9c4f5',
           fillColor: '#ffffff',
           fillOpacity: 0.9,
-        }).bringToFront();
+        });
       this.circle = L.circleMarker(latlng,
         {
           radius: 9, //radius: accuracy
           color: '#2940a6',
           fillColor: '#2940a6',
           fillOpacity: 1
-        }).bringToFront();
+        });
 
       // let a = this.alpha;
       // let a1 = this.alpha - 10;
@@ -360,7 +361,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       //     smoothFactor: 5
       //   });
 
-      var featureGroup = L.featureGroup([this.outerCircle, this.circle, orientationMarker]).addTo(this.map);
+      var featureGroup = L.featureGroup([this.outerCircle, this.circle]).addTo(this.map);
 
       if (!this.isNavigationToSelectedMarker) {
         // Find nearest fire hydrant
