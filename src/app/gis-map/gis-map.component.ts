@@ -3,6 +3,7 @@ import { Route } from '@angular/router';
 import { map, Subscription } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as L from 'leaflet';
+import * as LMR from 'leaflet-marker-rotation';
 
 import { initializeApp } from "firebase/app";
 import { getDatabase } from 'firebase/database';
@@ -112,6 +113,12 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   userLocationIcon = L.icon({
     iconUrl: 'user-location-marker-icon.png',
     iconSize: [45, 45]
+  });
+
+  orientationIcon = L.icon({
+    iconUrl: 'orientation-marker.png',
+    iconSize: [60, 60],
+    iconAnchor:   [30.5, 43]
   });
 
   constructor(private dbFunctionService: DbFunctionService, private modalService: NgbModal, private elementRef: ElementRef) { }
@@ -312,43 +319,48 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.map.removeLayer(this.orientationPolygon);
       }
 
+      let orientationMarker = new LMR.RotatedMarker([latlng.lat, latlng.lng], { 
+        icon: this.orientationIcon,
+        rotationAngle: this.alpha,
+        //rotationOrigin: 'center'
+      });
       this.outerCircle = L.circleMarker(latlng,
         {
           radius: 14, //radius: accuracy
           color: '#a9c4f5',
           fillColor: '#ffffff',
           fillOpacity: 0.9,
-        });
+        }).bringToFront();
       this.circle = L.circleMarker(latlng,
         {
           radius: 9, //radius: accuracy
           color: '#2940a6',
           fillColor: '#2940a6',
           fillOpacity: 1
-        });
+        }).bringToFront();
 
-      let a = this.alpha;
-      let a1 = this.alpha - 10;
-      let a2 = this.alpha + 10;
-      let x1 = (this.map.getZoom() / 8) * Math.cos(a1) / 10000;
-      let y1 = (this.map.getZoom() / 8) * Math.sin(a1) / 10000;
-      let x2 = (this.map.getZoom() / 8) * Math.cos(a2) / 10000;
-      let y2 = (this.map.getZoom() / 8) * Math.sin(a2) / 10000;
+      // let a = this.alpha;
+      // let a1 = this.alpha - 10;
+      // let a2 = this.alpha + 10;
+      // let x1 = (this.map.getZoom() / 8) * Math.cos(a1) / 10000;
+      // let y1 = (this.map.getZoom() / 8) * Math.sin(a1) / 10000;
+      // let x2 = (this.map.getZoom() / 8) * Math.cos(a2) / 10000;
+      // let y2 = (this.map.getZoom() / 8) * Math.sin(a2) / 10000;
 
-      console.log(this.map.getZoom())
+      // console.log(this.map.getZoom())
 
-      this.orientationPolygon = L.polygon([
-        [latlng.lat, latlng.lng],
-        [latlng.lat + y1, latlng.lng + x1],
-        [latlng.lat + y2, latlng.lng + x2]
-        //[latlng.lat + 0.0001, latlng.lng - 0.0001],
-        //[latlng.lat + 0.0001, latlng.lng + 0.0001]
-      ],
-        { color: 'red',
-          smoothFactor: 5
-        });
+      // this.orientationPolygon = L.polygon([
+      //   [latlng.lat, latlng.lng],
+      //   [latlng.lat + y1, latlng.lng + x1],
+      //   [latlng.lat + y2, latlng.lng + x2]
+      //   //[latlng.lat + 0.0001, latlng.lng - 0.0001],
+      //   //[latlng.lat + 0.0001, latlng.lng + 0.0001]
+      // ],
+      //   { color: 'red',
+      //     smoothFactor: 5
+      //   });
 
-      var featureGroup = L.featureGroup([this.outerCircle, this.circle, this.orientationPolygon]).addTo(this.map);
+      var featureGroup = L.featureGroup([this.outerCircle, this.circle, orientationMarker]).addTo(this.map);
 
       if (!this.isNavigationToSelectedMarker) {
         // Find nearest fire hydrant
