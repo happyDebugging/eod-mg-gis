@@ -119,7 +119,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   orientationIcon = L.icon({
     iconUrl: 'orientation-marker.png',
     iconSize: [60, 60],
-    iconAnchor: [30.5, 43]
+    iconAnchor: [35, 43]
   });
 
   constructor(private dbFunctionService: DbFunctionService, private modalService: NgbModal, private elementRef: ElementRef) { }
@@ -340,27 +340,6 @@ export class GisMapComponent implements OnInit, AfterViewInit {
           fillColor: '#2940a6',
           fillOpacity: 1
         });
-
-      // let a = this.alpha;
-      // let a1 = this.alpha - 10;
-      // let a2 = this.alpha + 10;
-      // let x1 = (this.map.getZoom() / 8) * Math.cos(a1) / 10000;
-      // let y1 = (this.map.getZoom() / 8) * Math.sin(a1) / 10000;
-      // let x2 = (this.map.getZoom() / 8) * Math.cos(a2) / 10000;
-      // let y2 = (this.map.getZoom() / 8) * Math.sin(a2) / 10000;
-
-      // console.log(this.map.getZoom())
-
-      // this.orientationPolygon = L.polygon([
-      //   [latlng.lat, latlng.lng],
-      //   [latlng.lat + y1, latlng.lng + x1],
-      //   [latlng.lat + y2, latlng.lng + x2]
-      //   //[latlng.lat + 0.0001, latlng.lng - 0.0001],
-      //   //[latlng.lat + 0.0001, latlng.lng + 0.0001]
-      // ],
-      //   { color: 'red',
-      //     smoothFactor: 5
-      //   });
 
       var featureGroup = L.featureGroup([this.outerCircle, this.circle]).addTo(this.map);
 
