@@ -323,7 +323,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       this.orientationMarker = new LMR.RotatedMarker([latlng.lat, latlng.lng], {
         icon: this.orientationIcon,
-        rotationAngle: (( (-this.alpha) + 90) % 360),
+        rotationAngle: (( -(this.alpha + 90) ) % 360),
         //rotationOrigin: 'bottom'
       }).addTo(this.map);
       this.outerCircle = L.circleMarker(latlng,
