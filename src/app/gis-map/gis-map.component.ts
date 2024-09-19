@@ -320,11 +320,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.map.removeLayer(this.orientationMarker);
       }
 
-      // this.orientationMarker = new LMR.RotatedMarker([latlng.lat, latlng.lng], { 
-      //   icon: this.orientationIcon,
-      //   rotationAngle: this.alpha,
-      //   //rotationOrigin: 'center'
-      // }).addTo(this.map);
+
+      if (this.isNavigationOn) {
+        this.orientationMarker = new LMR.RotatedMarker([latlng.lat, latlng.lng], { 
+          icon: this.orientationIcon,
+          rotationAngle: (- this.alpha + 90) % 360,
+          //rotationOrigin: 'center'
+        }).addTo(this.map);
+      }
       this.outerCircle = L.circleMarker(latlng,
         {
           radius: 14, //radius: accuracy
