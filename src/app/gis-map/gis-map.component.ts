@@ -119,7 +119,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   orientationIcon = L.icon({
     iconUrl: 'orientation-marker.png',
     iconSize: [45, 45],
-    iconAnchor: [22.2, 22.5]
+    iconAnchor: [22.1, 22.5]
   });
 
   constructor(private dbFunctionService: DbFunctionService, private modalService: NgbModal, private elementRef: ElementRef) { }
