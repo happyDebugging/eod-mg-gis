@@ -119,7 +119,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   orientationIcon = L.icon({
     iconUrl: 'orientation-marker.png',
     iconSize: [45, 45],
-    iconAnchor: [22.2, 22]
+    iconAnchor: [22.1, 22]
   });
 
   constructor(private dbFunctionService: DbFunctionService, private modalService: NgbModal, private elementRef: ElementRef) { }
@@ -323,7 +323,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       this.orientationMarker = new LMR.RotatedMarker([latlng.lat, latlng.lng], {
         icon: this.orientationIcon,
-        rotationAngle: (( -(this.alpha + 45) ) % 360),
+        rotationAngle: (( -(this.alpha ) ) % 360),
         //rotationOrigin: 'bottom'
       }).addTo(this.map);
       this.outerCircle = L.circleMarker(latlng,
