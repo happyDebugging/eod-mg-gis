@@ -149,7 +149,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
 
     // Get device orientation
-    window.addEventListener("deviceorientation", (event: any) => {
+    window.addEventListener("deviceorientationabsolute", (event: any) => {
       this.absolute = event.absolute;
       this.alpha = event.alpha; // x
       this.beta = event.beta; // y
