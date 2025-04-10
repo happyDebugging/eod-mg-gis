@@ -976,7 +976,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   async ResetPassword() {
 
     await this.supabase.auth.resetPasswordForEmail(this.userEmail, {
-      redirectTo: environment.appUrl+'/reset-password/session/'+(Math.floor(Math.random() * (99999999 - 10000000 + 1)) + 10000000)
+      redirectTo: 'http://localhost:4200'+'/reset-password/session/'+(Math.floor(Math.random() * (99999999 - 10000000 + 1)) + 10000000)
+      //redirectTo: environment.appUrl+'/reset-password/session/'+(Math.floor(Math.random() * (99999999 - 10000000 + 1)) + 10000000)
     })
       .then(() => {
 

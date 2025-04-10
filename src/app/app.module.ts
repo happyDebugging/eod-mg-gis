@@ -8,11 +8,13 @@ import { GisMapComponent } from './gis-map/gis-map.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DbFunctionService } from './shared/services/db-functions.service';
 import { FormsModule } from '@angular/forms';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GisMapComponent
+    GisMapComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,
