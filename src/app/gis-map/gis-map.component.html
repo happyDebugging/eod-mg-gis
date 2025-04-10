@@ -13,8 +13,20 @@
         <label for="userPassword" class="col-form-label">Κωδικός:</label>
         <input type="password" class="form-control" id="userPassword" name="userPassword" [(ngModel)]="userPassword">
       </div>
+      <small class="mb-3">
+        <p><a class="link-offset-2 link-underline link-underline-opacity-0 fw-light"
+            (click)="EnterMailForPasswordReset()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-key"
+              viewBox="0 0 16 16">
+              <path
+                d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8m4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5" />
+              <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+            </svg>
+            Ξέχασα τον κωδικό μου
+          </a></p>
+      </small>
       <div class="mb-3">
-        <label *ngIf="isCredentialsWrong" class="text-danger">{{  errorMessageToShow }}</label>
+        <label *ngIf="isCredentialsWrong" class="text-danger">{{ errorMessageToShow }}</label>
       </div>
     </form>
   </div>
@@ -23,6 +35,42 @@
       (click)="dismissUserLoginModal()">Άκυρο</button>
     <button type="button" class="btn btn-primary" (click)="AuthenticateUser()">Σύνδεση</button>
   </div>
+</ng-template>
+
+<!-- Reset Password Modal -->
+<ng-template #resetPassword let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5" id="exampleModalLabel">Επαναφορά κωδικού πρόσβασης</h1>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="mb-3 text-wrap fw-light">
+        Εφόσον η διεύθυνση ηλεκτρονικού ταχυδρομείου που εισάγετε είναι έγκυρη, θα λάβετε μήνυμα για
+        επαναφορά του κωδικού πρόσβασης.
+      </div>
+      <div class="mb-3">
+        <label for="inputEmail" class="form-label">Email</label>
+        <input type="email" class="form-control" id="inputEmail" name="userEmail" [(ngModel)]="userEmail">
+      </div>
+      <div class="mb-3">
+        <p><a class="link-offset-2 link-underline link-underline-opacity-0" (click)="ReturnToSignIn()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left"
+              viewBox="0 0 16 16">
+              <path fill-rule="evenodd"
+                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8" />
+            </svg>
+            Επιστροφή στη σύνδεση</a></p>
+      </div>
+      <button *ngIf="!emailSent" type="submit" class="btn btn-primary col-12" (click)="ResetPassword()">Επαναφορά
+        κωδικού πρόσβασης</button>
+      <button *ngIf="emailSent" type="button" class="btn btn-info col-12">Το μήνυμα στάλθηκε!</button>
+    </form>
+  </div>
+  <!-- <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+      (click)="dismissUserLoginModal()">Άκυρο</button>
+    <button type="button" class="btn btn-primary" (click)="AuthenticateUser()">Σύνδεση</button>
+  </div> -->
 </ng-template>
 
 <!-- Manage User Account Modal -->
@@ -34,11 +82,11 @@
     <form>
       <div class="mb-3 d-grid text-center mx-auto">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-      (click)="PrepareToUpdateUserPassword()">Αλλαγή κωδικού πρόσβασης</button>
+          (click)="PrepareToUpdateUserPassword()">Αλλαγή κωδικού πρόσβασης</button>
       </div>
       <div class="mb-3 d-grid text-center mx-auto">
         <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
-      (click)="UserSignOutConfirmation()">Αποσύνδεση</button>
+          (click)="UserSignOutConfirmation()">Αποσύνδεση</button>
       </div>
     </form>
   </div>
@@ -76,23 +124,28 @@
     <form>
       <div class="mb-3">
         <label for="newUserPassword" class="col-form-label">Κωδικός:</label>
-        <input type="password" class="form-control" id="newUserPassword" name="newUserPassword" [(ngModel)]="newUserPassword">
+        <input type="password" class="form-control" id="newUserPassword" name="newUserPassword"
+          [(ngModel)]="newUserPassword">
       </div>
       <div class="mb-3">
         <label for="newUserPasswordConfirmation" class="col-form-label">Επαλήθευση κωδικού:</label>
-        <input type="password" class="form-control" id="newUserPasswordConfirmation" name="newUserPasswordConfirmation" [(ngModel)]="newUserPasswordConfirmation">
+        <input type="password" class="form-control" id="newUserPasswordConfirmation" name="newUserPasswordConfirmation"
+          [(ngModel)]="newUserPasswordConfirmation">
       </div>
       <div class="mb-3">
-        <label *ngIf="(newUserPassword != newUserPasswordConfirmation) && (newUserPassword.length>5 && newUserPasswordConfirmation.length>5)" class="text-danger">Ο κωδικοί πρόσβασης δεν ταιριάζουν.</label>
+        <label
+          *ngIf="(newUserPassword != newUserPasswordConfirmation) && (newUserPassword.length>5 && newUserPasswordConfirmation.length>5)"
+          class="text-danger">Ο κωδικοί πρόσβασης δεν ταιριάζουν.</label>
       </div>
       <div class="mb-3">
-        <label *ngIf="!isPassword6Characters && (newUserPassword == newUserPasswordConfirmation) && (!(newUserPassword.length>5) || !(newUserPasswordConfirmation.length>5))" class="text-danger">O κωδικός πρέπει να περιέχει τουλάχιστον 6 χαρακτήρες.</label>
+        <label
+          *ngIf="!isPassword6Characters && (newUserPassword == newUserPasswordConfirmation) && (!(newUserPassword.length>5) || !(newUserPasswordConfirmation.length>5))"
+          class="text-danger">O κωδικός πρέπει να περιέχει τουλάχιστον 6 χαρακτήρες.</label>
       </div>
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-      (click)="ManageUserAccount()">Άκυρο</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="ManageUserAccount()">Άκυρο</button>
     <button type="button" class="btn btn-primary" (click)="UpdateUserPassword()">Αποθήκευση</button>
   </div>
 </ng-template>
@@ -306,17 +359,18 @@
           d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
       </svg></button>
 
-    <button *ngIf="isUserLoggedIn" type="button" id="loginButton" class="btn btn-Light" (click)="ManageUserAccount()"><svg
-        xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-check"
-        viewBox="0 0 16 16">
+    <button *ngIf="isUserLoggedIn" type="button" id="loginButton" class="btn btn-Light"
+      (click)="ManageUserAccount()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+        class="bi bi-person-fill-check" viewBox="0 0 16 16">
         <path
           d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
         <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4" />
       </svg></button>
 
-      <div *ngIf="isChangePasswordSuccessfull" #changePasswordSuccessfullAlert id="changePasswordSuccessfullAlert" class="alert alert-success text-center" role="alert">
-        Επιτυχής ενημέρωση κωδικού πρόσβασης!
-      </div>
+    <div *ngIf="isChangePasswordSuccessfull" #changePasswordSuccessfullAlert id="changePasswordSuccessfullAlert"
+      class="alert alert-success text-center" role="alert">
+      Επιτυχής ενημέρωση κωδικού πρόσβασης!
+    </div>
 
   </div>
 </div>

@@ -69,6 +69,10 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   isChangePasswordSuccessfull = false;
   errorMessageToShow = '';
 
+  isPasswordVisible = false;
+  hasForgottenPassword = false;
+  emailSent = false;
+
   // test orientation
   absolute = false;
   alpha = 0;
@@ -82,6 +86,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   @ViewChild('details') details: any;
   @ViewChild('detailsToPost') detailsToPost: any;
   @ViewChild('changePasswordSuccessfullAlert') changePasswordSuccessfullAlert: any;
+  @ViewChild('resetPassword') resetPassword: any;
 
   getPOI: Subscription = new Subscription;
   updatePOI: Subscription = new Subscription;
@@ -825,7 +830,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
 
   UserLogin() {
+    this.modalService.dismissAll();
     this.modalService.open(this.userLogin, { centered: true, size: 'sm', windowClass: 'zindex' });
+  }
+
+  OpenResetPasswordModal() {
+    this.modalService.dismissAll();
+    this.modalService.open(this.resetPassword, { centered: true, size: 'sm', windowClass: 'zindex' });
   }
 
   AuthenticateUser() {
@@ -943,6 +954,41 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         console.log(error)
 
         this.isPassword6Characters = false;
+      });
+  }
+
+  ToggleShowHidePassword() {
+    this.isPasswordVisible = !this.isPasswordVisible;
+  }
+
+  EnterMailForPasswordReset() {
+    this.hasForgottenPassword = true;
+    this.emailSent = false;
+
+    this.OpenResetPasswordModal();
+  }
+
+  ReturnToSignIn() {
+    this.hasForgottenPassword = false;
+    this.UserLogin();
+  }
+
+  async ResetPassword() {
+
+    await this.supabase.auth.resetPasswordForEmail(this.userEmail, {
+      redirectTo: environment.appUrl+'/reset-password/session/'+(Math.floor(Math.random() * (99999999 - 10000000 + 1)) + 10000000)
+    })
+      .then(() => {
+
+        this.emailSent = true;
+
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        console.log(errorMessage)
+
       });
   }
 

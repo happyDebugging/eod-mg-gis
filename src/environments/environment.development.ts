@@ -1,5 +1,7 @@
 export const environment = {
     production: false,
+
+    appUrl: "http://localhost:4200",
   
     databaseURL: "https://eod-mg-gis-default-rtdb.europe-west1.firebasedatabase.app",
     fireHydrantTable: '/fireHydrantPOI',
