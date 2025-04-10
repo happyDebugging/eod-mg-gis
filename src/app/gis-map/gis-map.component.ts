@@ -323,7 +323,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
       this.orientationMarker = new LMR.RotatedMarker([latlng.lat, latlng.lng], {
         icon: this.orientationIcon,
-        rotationAngle: (( -(this.alpha ) ) % 360),
+        rotationAngle: ((-(this.alpha)) % 360),
         //rotationOrigin: 'bottom'
       }).addTo(this.map);
       this.outerCircle = L.circleMarker(latlng,
@@ -421,11 +421,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   UpdateLocationOfMovedMarker(movedMarker: FireHydrantPoi) {
 
-    this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(movedMarker)
-      .pipe(map((response: any) => {
+    //this.updatePOI = 
+    this.dbFunctionService.updateFireHydrantsToDb(movedMarker)
+      // .pipe(map((response: any) => {
 
-      }))
-      .subscribe(
+      // }))
+      // .subscribe(
+      .then(
         (res: any) => {
           if ((res != null) || (res != undefined)) {
             console.log(res)
@@ -466,22 +468,24 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   GetFireHydrantsPOI() {
     this.fireHydrantMarkers = [];
 
-    this.getPOI = this.dbFunctionService.getFireHydrantsFromDb()
-      .pipe(map((response: any) => {
-        let markerArray: FireHydrantPoi[] = [];
+    //this.getPOI = 
+    this.dbFunctionService.getFireHydrantsFromDb()
+      // .pipe(map((response: any) => {
+      //   let markerArray: FireHydrantPoi[] = [];
 
-        for (const key in response) {
-          if (response.hasOwnProperty(key)) {
+      //   for (const key in response) {
+      //     if (response.hasOwnProperty(key)) {
 
-            markerArray.push({ ...response[key], Id: key })
+      //       markerArray.push({ ...response[key], Id: key })
 
-          }
-        }
+      //     }
+      //   }
 
-        return markerArray.reverse();
+      //   return markerArray.reverse();
 
-      }))
-      .subscribe(
+      // }))
+      // .subscribe(
+      .then(
         (res: any) => {
           if ((res != null) || (res != undefined)) {
             //console.log(res)
@@ -613,7 +617,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       fireHydrants.Type = m.Type;
 
       this.dbFunctionService.postFireHydrantsToDb(fireHydrants)
-        .subscribe(
+        //.subscribe(
+        .then(
           (res: any) => {
             console.log(res);
             if ((res != null) || (res != undefined)) {
@@ -705,7 +710,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     fireHydrant.Responsible = this.loggedInUserId;
 
     this.dbFunctionService.postFireHydrantsToDb(fireHydrant)
-      .subscribe(
+      //.subscribe(
+      .then(
         (res: any) => {
           console.log(res);
           if ((res != null) || (res != undefined)) {
@@ -738,13 +744,15 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     updatedMarker.HoseDiameter = this.hoseDiameter;
     updatedMarker.Responsible = this.loggedInUserId;
 
-    this.updatePOI = this.dbFunctionService.updateFireHydrantsToDb(updatedMarker)
-      .pipe(map((response: any) => {
+    //this.updatePOI = 
+    this.dbFunctionService.updateFireHydrantsToDb(updatedMarker)
+      // .pipe(map((response: any) => {
 
-        this.GetFireHydrantsPOI();
+      //   this.GetFireHydrantsPOI();
 
-      }))
-      .subscribe(
+      // }))
+      //.subscribe(
+      .then(
         (res: any) => {
           if ((res != null) || (res != undefined)) {
             console.log(res)
