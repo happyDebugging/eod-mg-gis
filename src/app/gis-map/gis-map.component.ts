@@ -11,6 +11,8 @@ import { getAuth, signInWithEmailAndPassword, signOut, updatePassword } from "fi
 
 import { FireHydrantPoi } from '../shared/models/fire-hydrant.model';
 import { DbFunctionService } from '../shared/services/db-functions.service';
+import { AuthSession, createClient, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from '../../environments/environment.development';
 
 @Component({
   selector: 'app-gis-map',
@@ -122,7 +124,13 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     iconAnchor: [22.1, 22.5]
   });
 
-  constructor(private dbFunctionService: DbFunctionService, private modalService: NgbModal, private elementRef: ElementRef) { }
+  // Initialize Supabase
+  private supabase: SupabaseClient
+  _session: AuthSession | null = null
+
+  constructor(private dbFunctionService: DbFunctionService, private modalService: NgbModal, private elementRef: ElementRef) {
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey)
+  }
 
   ngOnInit(): void {
 
@@ -824,10 +832,14 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
     this.errorMessageToShow = '';
 
-    signInWithEmailAndPassword(this.auth, this.userEmail.trim(), this.userPassword.trim())
+    // signInWithEmailAndPassword(this.auth, this.userEmail.trim(), this.userPassword.trim())
+    //   .then((userCredential) => {
+
+    //Sign in with Supabase
+    this.supabase.auth.signInWithPassword({ email: this.userEmail.trim(), password: this.userPassword.trim() })
       .then((userCredential) => {
         // Signed in 
-        const user = userCredential.user;
+        const user = userCredential.data.user;
 
         this.isUserLoggedIn = true;
         localStorage.setItem("isUserLoggedIn", "true");
@@ -837,8 +849,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.userEmail = '';
         this.userPassword = '';
 
-        this.loggedInUserId = user.uid;
-        localStorage.setItem("loggedInUserId", user.uid);
+        this.loggedInUserId = user!.id;
+        localStorage.setItem("loggedInUserId", user!.id);
 
         //this.accessToken = user.accessToken;
 
@@ -877,19 +889,21 @@ export class GisMapComponent implements OnInit, AfterViewInit {
   UserSignOut() {
     this.modalService.dismissAll();
 
-    signOut(this.auth).then(() => {
-      // Sign-out successful.
-      this.isUserLoggedIn = false;
-      localStorage.clear();
+    //signOut(this.auth)
+    this.supabase.auth.signOut()
+      .then(() => {
+        // Sign-out successful.
+        this.isUserLoggedIn = false;
+        localStorage.clear();
 
-      this.dismissDetailsModal();
+        this.dismissDetailsModal();
 
-      this.GetFireHydrantsPOI();
+        this.GetFireHydrantsPOI();
 
-    }).catch((error) => {
-      // An error happened.
-      console.log(error)
-    });
+      }).catch((error) => {
+        // An error happened.
+        console.log(error)
+      });
   }
 
   ManageUserAccount() {
@@ -906,28 +920,30 @@ export class GisMapComponent implements OnInit, AfterViewInit {
     this.modalService.open(this.updatePassword, { centered: true, size: 'sm', windowClass: 'zindex' });
   }
 
-  UpdateUserPassword() {
+  async UpdateUserPassword() {
 
     const user = this.auth.currentUser;
 
-    updatePassword(user, this.newUserPassword).then(() => {
-      // Update successful.
-      this.modalService.dismissAll();
-      this.isChangePasswordSuccessfull = true;
+    //updatePassword(user, this.newUserPassword)
+    await this.supabase.auth.updateUser({ password: this.newUserPassword })
+      .then(() => {
+        // Update successful.
+        this.modalService.dismissAll();
+        this.isChangePasswordSuccessfull = true;
 
-      this.newUserPassword = '';
-      this.newUserPasswordConfirmation = '';
-      this.isPassword6Characters = true;
+        this.newUserPassword = '';
+        this.newUserPasswordConfirmation = '';
+        this.isPassword6Characters = true;
 
-      setTimeout(() => {
-        this.isChangePasswordSuccessfull = false;
-      }, 2000);
+        setTimeout(() => {
+          this.isChangePasswordSuccessfull = false;
+        }, 2000);
 
-    }).catch((error) => {
-      console.log(error)
+      }).catch((error) => {
+        console.log(error)
 
-      this.isPassword6Characters = false;
-    });
+        this.isPassword6Characters = false;
+      });
   }
 
   dismissUserLoginModal() {
