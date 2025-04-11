@@ -139,8 +139,8 @@ export class GisMapComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
 
-    this.isUserLoggedIn = JSON.parse(JSON.stringify(localStorage.getItem("isUserLoggedIn")));
-    this.loggedInUserId = JSON.parse(JSON.stringify(localStorage.getItem("loggedInUserId")));
+    this.isUserLoggedIn = JSON.parse(JSON.stringify(sessionStorage.getItem("isUserLoggedIn")));
+    this.loggedInUserId = JSON.parse(JSON.stringify(sessionStorage.getItem("loggedInUserId")));
 
     // Initialize Firebase
     const firebaseApp = initializeApp(this.firebaseConfig);
@@ -853,7 +853,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         const user = userCredential.data.user;
 
         this.isUserLoggedIn = true;
-        localStorage.setItem("isUserLoggedIn", "true");
+        sessionStorage.setItem("isUserLoggedIn", "true");
 
         this.isCredentialsWrong = false;
 
@@ -861,7 +861,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         this.userPassword = '';
 
         this.loggedInUserId = user!.id;
-        localStorage.setItem("loggedInUserId", user!.id);
+        sessionStorage.setItem("loggedInUserId", user!.id);
 
         //this.accessToken = user.accessToken;
 
@@ -885,7 +885,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
         }
 
         this.isUserLoggedIn = false;
-        localStorage.clear();
+        sessionStorage.clear();
 
         this.isCredentialsWrong = true;
       });
@@ -905,7 +905,7 @@ export class GisMapComponent implements OnInit, AfterViewInit {
       .then(() => {
         // Sign-out successful.
         this.isUserLoggedIn = false;
-        localStorage.clear();
+        sessionStorage.clear();
 
         this.dismissDetailsModal();
 
