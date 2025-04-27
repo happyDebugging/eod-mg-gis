@@ -4,7 +4,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { GisMapComponent } from './gis-map/gis-map.component';
 
 const routes: Routes = [
-  { path: '', component: GisMapComponent },
+  { path: '', pathMatch: 'full', component: GisMapComponent },
 
   { path: 'reset-password/session/:session-id', pathMatch: 'full', component: ResetPasswordComponent},
 
