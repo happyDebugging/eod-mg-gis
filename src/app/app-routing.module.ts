@@ -4,12 +4,12 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { GisMapComponent } from './gis-map/gis-map.component';
 
 const routes: Routes = [
-  { path: 'map', component: GisMapComponent },
+  { path: '', component: GisMapComponent },
 
   { path: 'reset-password/session/:session-id', pathMatch: 'full', component: ResetPasswordComponent},
 
-  { path: '', pathMatch: 'full', component: GisMapComponent }, 
-  { path: '**', pathMatch: 'full', redirectTo: 'map'},  // Wildcard route for a 404 page
+  //{ path: '', pathMatch: 'full', redirectTo: '' }, 
+  { path: '**', pathMatch: 'full', redirectTo: ''},  // Wildcard route for a 404 page
 ];
 
 @NgModule({
