@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.development';
+//import { environment } from '../../environments/environment';
 import { DbFunctionService } from '../shared/services/db-functions.service';
 import { Router } from '@angular/router';
 
