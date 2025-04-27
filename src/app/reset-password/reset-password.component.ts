@@ -70,7 +70,7 @@ export class ResetPasswordComponent {
 
           setTimeout(() => {
             this.isChangePasswordSuccessfull = false;
-            window.location.href = environment.appUrl + '/map';
+            window.location.href = environment.appUrl;
           }, 2500);
         }
 
