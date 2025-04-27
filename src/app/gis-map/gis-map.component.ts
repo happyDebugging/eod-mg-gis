@@ -12,8 +12,8 @@ import { getAuth, signInWithEmailAndPassword, signOut, updatePassword } from "fi
 import { FireHydrantPoi } from '../shared/models/fire-hydrant.model';
 import { DbFunctionService } from '../shared/services/db-functions.service';
 import { AuthSession, createClient, SupabaseClient } from '@supabase/supabase-js';
-//import { environment } from '../../environments/environment.development';
-import { environment } from '../../environments/environment';
+import { environment } from '../../environments/environment.development';
+//import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-gis-map',
