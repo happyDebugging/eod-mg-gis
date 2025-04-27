@@ -8,7 +8,7 @@ const routes: Routes = [
 
   { path: 'reset-password/session/:session-id', pathMatch: 'full', component: ResetPasswordComponent},
 
-  { path: '', pathMatch: 'full', redirectTo: 'map' }, 
+  { path: '', pathMatch: 'full', component: GisMapComponent }, 
   { path: '**', pathMatch: 'full', redirectTo: 'map'},  // Wildcard route for a 404 page
 ];
 
