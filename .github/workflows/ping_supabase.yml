@@ -2,7 +2,7 @@ name: Ping Supabase to Prevent Pausing
 
 on:
   schedule:
-    - cron: '0 9 * * 1,4' # Runs at 9:00 AM UTC every Monday and Thursday
+    - cron: '0 5 * * *'  #'0 9 * * 1,4' # Runs at 9:00 AM UTC every Monday and Thursday
   workflow_dispatch: # Allows manual triggering from the GitHub UI
 
 jobs:
@@ -45,7 +45,7 @@ jobs:
               //const { data, error } = await supabase.from('fireHydrantPOI').select('*').limit(10);
 
               // Ping Supabase by inserting new row into a table (e.g., 'ping')
-              const { data, error } = await this.supabase.from('ping').insert({}).select();
+              const { data, error } = await this.supabase.from('ping').insert({});
 
               // Handle errors
               if (error) throw error;
