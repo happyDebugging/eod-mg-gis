@@ -45,7 +45,17 @@ jobs:
               //const { data, error } = await supabase.from('fireHydrantPOI').select('*').limit(10);
 
               // Ping Supabase by inserting new row into a table (e.g., 'ping')
-              const { data, error } = await this.supabase.from('ping').insert({});
+              //const { data, error } = await this.supabase.from('ping').insert({});
+
+              const { data, error } = this.supabase.from('fireHydrantPOI').insert({
+                  Lat: '39.36108527578062',
+                  Lng: '22.66160457742442',
+                  Address: 'gfd',
+                  State: 'jy',
+                  StateDescription: 'ghtj',
+                  HoseDiameter: 'ht',
+                  Responsible: 'htj',
+                  Type: 'yjtyj'}).select();
 
               // Handle errors
               if (error) throw error;
