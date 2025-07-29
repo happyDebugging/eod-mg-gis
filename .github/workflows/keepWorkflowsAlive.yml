@@ -1,4 +1,4 @@
-name: Keepalive Commit
+name: Keep Workflows Alive
 
 on:
   schedule:
