@@ -1,0 +1,18 @@
+name: Keepalive Commit
+
+on:
+  schedule:
+    - cron: '0 0 */59 * *'
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Make dummy commit
+        run: |
+          git config --global user.email "squirrelinthewoods@protonmail.com"
+          git config --global user.name "Keepalive Bot"
+          git commit --allow-empty -m "chore: keepalive"
+          git push
