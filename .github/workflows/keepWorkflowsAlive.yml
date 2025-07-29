@@ -3,6 +3,7 @@ name: Keep Workflows Alive
 on:
   schedule:
     - cron: '0 0 */59 * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub UI
 
 jobs:
   commit:
